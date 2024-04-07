@@ -1,134 +1,111 @@
 N, M, P, C, D = map(int, input().split())
-visited = [[0] * N for _ in range(N)]
-rdp_r, rdp_c = map(lambda x: int(x) - 1, input().split())
-visited[rdp_r][rdp_c] = -1
+v = [[0]*N for _ in range(N)]
 
-santa_score = [0] * (P + 1)
-alive = [1] * (P + 1)
-alive[0] = 0
-wakeup_turns = [1] * (P + 1)
+ri, rj = map(lambda x:int(x)-1, input().split())
+v[ri][rj]=-1                                # 루돌프표시(-1)
 
-Santas = [[N] * 2 for _ in range(P + 1)]
+score = [0]*(P+1)
+alive = [1]*(P+1)
+alive[0] = 0                                # 첫 번째는 없는 산타
+wakeup_turn = [1]*(P+1)
+
+santa = [[N]*2 for _ in range(P+1)]         # 빈 자리, 번호 맞추기
 for _ in range(1, P + 1):
-    s_num, r, c = map(int, input().split())
-    Santas[s_num] = [r - 1, c - 1]
-    visited[r - 1][c - 1] = N
+    n,i,j = map(int, input().split())
+    santa[n]=[i-1,j-1]                      # i, j
+    v[i-1][j-1] = n
 
-def move_santa(cur_santa, sr, sc, dr, dc, mul):
-    # cur_santa번 산타를 sr, sc에서 dr, dc방향으로 mul칸 이동
-    q = [(cur_santa, sr, sc, mul)]
+def move_santa(cur,si,sj,di,dj,mul):
+    q = [(cur,si,sj,mul)]           # cur번 산타를 si,sj에서 di,dj방향으로 mul칸 이동
 
     while q:
-        cur_santa, cr, cc, mul = q.pop(0)
-        # 진행방향 mul칸만큼 이동시켜서 범위내이고 산타있으면 q삽입 / 범위밖 처리
-        mr, mc = cr + dr * mul, cc + dc * mul
-        # 범위 내 산타 O, X
-        if 0 <= mr < N and 0 <= mc < N:
-            # 빈 칸 => 이동처리
-            if visited[mr][mc] == 0:
-                visited[mr][mc] = cur_santa
-                Santas[cur_santa] = [mr, mc]
+        cur,ci,cj,mul=q.pop(0)
+        # 진행방향 mul칸만큼 이동시켜서 범위내이고 산타있으면 q삽입/범위밖 처리
+        ni,nj=ci+di*mul, cj+dj*mul
+        if 0<=ni<N and 0<=nj<N:     # 범위내 => 산타 O, X
+            if v[ni][nj]==0:        # 빈 칸 => 이동처리
+                v[ni][nj]=cur
+                santa[cur]=[ni,nj]
                 return
-            else:
-                q.append((visited[mr][mc], mr, mc, 1))
-                visited[mr][mc] = cur_santa
-                Santas[cur_santa] = [mr, mc]
-        else:
-            alive[cur_santa] = 0
+            else:                   # 산타 O => 연쇄이동
+                q.append((v[ni][nj],ni,nj,1))   # 한칸 이동, v[ni][nj]: 다음 산타번호
+                v[ni][nj]=cur
+                santa[cur]=[ni,nj]
+        else:                       # 범위밖 => 탈락 => 끝
+            alive[cur]=0
             return
 
-for turn in range(1, M + 1):
-    # 0. 모두 탈락 시(alive 모두 0) => break
-    if alive.count(1) == 0:
+for turn in range(1, M+1):
+    # [0] 모두 탈락 시(alive 모두 0) => break
+    if alive.count(1)==0:
         break
 
-    # 1-1. 루돌프 이동: 가장 가까운 산타 찾기
-    min_dst = N ** 2
-    for santa in range(1, P + 1):
-        # 탈락한 산타 => skip
-        if alive[santa] == 0:
-            continue
+    # [1-1] 루돌프 이동: 가장 가까운 산타찾기
+    mn = 2*N**2
+    for idx in range(1, P+1):
+        if alive[idx]==0:   continue    # 타락한 산타 => skip..
 
-        sr, sc = Santas[santa]
-        dst = (rdp_r - sr) ** 2 + (rdp_c - sc) ** 2
-        if dst < min_dst:
-            min_dst = dst
-            nrt_santas = [(sr, sc, santa)]
-        elif dst == min_dst:
-            nrt_santas.append((sr, sc, santa))
+        si,sj=santa[idx]
+        dist=(ri-si)**2+(rj-sj)**2      # 현재거리
+        if mn>dist:
+            mn=dist
+            mlst=[(si,sj,idx)]          # 최소거리=>새리스트
+        elif mn==dist:                  # 같은최소=>추가
+            mlst.append((si,sj,idx))
+    mlst.sort(reverse=True)             # 행 큰>열 큰
+    si,sj,mn_idx = mlst[0]              # 돌격 목표산타!
 
-    # 행 큰 > 열 큰
-    nrt_santas.sort(reverse=True)
-    nrt_sr, nrt_sc, nrt_santa = nrt_santas[0]
+    # [1-2] 대상 산타 방향으로 루돌프 이동
+    rdi = rdj = 0
+    if ri>si:   rdi=-1  # 산타가 좌표 작은값 => -1방향 이동
+    elif ri<si: rdi=1
 
-    # 1-2. 대상 산타(루돌프와 가장 가까운) 방향으로 루돌프 이동
-    rdr, rdc = 0, 0
-    # 산타가 작은값 좌표 => -1방향으로 이동
-    if rdp_r > nrt_sr:
-        rdr = -1
-    elif rdp_r < nrt_sr:
-        rdr = 1
+    if rj>sj:   rdj=-1
+    elif rj<sj: rdj=1
 
-    if rdp_c > nrt_sc:
-        rdc = -1
-    elif rdp_c < nrt_sc:
-        rdc = 1
+    v[ri][rj]=0             # 루돌프 현재자리 지우기
+    ri,rj = ri+rdi, rj+rdj  # 루돌프 이동
+    v[ri][rj]=-1            # 이동한 자리에 표시
 
-    # 루돌프 현재자리 지우기
-    visited[rdp_r][rdp_c] = 0
-    # 루돌프 이동
-    rdp_r, rdp_c = rdp_r + rdr, rdp_c + rdc
-    # 이동한 자리에 표시
-    visited[rdp_r][rdp_c] = -1
+    # [1-3] 루돌프와 산타가 충돌한 경우 산타 밀리는 처리
+    if (ri,rj)==(si,sj):            # 충돌!
+        score[mn_idx]+=C            # 산타는 C점 획득
+        wakeup_turn[mn_idx]=turn+2  # 깨어날 턴 번호를 저장
+        move_santa(mn_idx,si,sj,rdi,rdj,C)  # 산타 C칸이동
 
-    # 1-3. 루돌프와 산타가 충돌한 경우 산타가 밀리는 처리
-    if (rdp_r, rdp_c) == (nrt_sr, nrt_sc):
-        santa_score[nrt_santa] += C
-        wakeup_turns[nrt_santa] = turn + 2
-        move_santa(nrt_santa, nrt_sr, nrt_sc, rdr, rdc, C)
+    # [2-1] 순서대로 산타이동: 기절하지 않은 경우(산타의 턴 <= turn)
+    for idx in range(1, P+1):
+        if alive[idx]==0:           continue    # 탈락한 경우 skip
+        if wakeup_turn[idx]>turn:   continue    # 깨어날 턴이 아직 안된경우
 
-    # 2-1. 순서대로 산타이동: 기절하지 않은 경우(산타 차례 <= turn)
-    for santa in range(1, P + 1):
-        # 탈락한 경우 skip
-        if alive[santa] == 0:
-            continue
-
-        # 깨어날 차례가 아직 안된 경우
-        if wakeup_turns[santa] > turn:
-            continue
-
-        sr, sc = Santas[santa]
-        min_dst = (rdp_r - sr) ** 2 + (rdp_c - sc) ** 2
-        moves_lst = []
+        si,sj = santa[idx]
+        mn_dist = (ri-si)**2 + (rj-sj)**2
+        tlst = []
         # 상우하좌 순으로 최소거리 찾기
-        for dr, dc in [(-1, 0), (0, 1), (1, 0), (0, -1)]:
-            mr, mc = sr + dr, sc + dc
-            dst = (mr - rdp_r) ** 2 + (mc - rdp_c) ** 2
-            if 0 <= mr < N and 0 <= mc < N and visited[mr][mc] <= 0 and min_dst > dst:
-                min_dst = dst
-                moves_lst.append((mr, mc, dr, dc))
+        for di,dj in ((-1,0),(0,1),(1,0),(0,-1)):
+            ni,nj=si+di,sj+dj
+            dist = (ri-ni)**2 + (rj-nj)**2
+            # 범위내, 산타 없고(<=0),더 짧은 거리인 경우
+            if 0<=ni<N and 0<=nj<N and v[ni][nj]<=0 and mn_dist>dist:
+                mn_dist = dist
+                tlst.append((ni,nj,di,dj))
+        if len(tlst)==0:    continue    # 이동할 위치 없음
+        ni,nj,di,dj = tlst[-1]          # 마지막에 추가된(더 짧은 거리)
 
-        # 이동할 위치 없음
-        if len(moves_lst) == 0:
-            continue
+        # [2-2] 루돌프와 충돌시 처리
+        if (ri,rj)==(ni,nj):            # 루돌프와 충돌: 반대로 튕겨나감!
+            score[idx]+=D
+            wakeup_turn[idx]=turn+2
+            v[si][sj]=0
+            move_santa(idx,ni,nj,-di,-dj,D)
+        else:                           # 빈 칸: 좌표갱신, 이동처리
+            v[si][sj]=0
+            v[ni][nj]=idx
+            santa[idx]=[ni,nj]
 
-        # 마지막에 추가된 더 짧은 거리
-        mr, mc, dr, dc = moves_lst[-1]
+    # [3] 점수획득: alive 산타는 +1점
+    for i in range(1,P+1):
+        if alive[i]==1:
+            score[i]+=1
 
-        # 2-2. 루돌프와 충돌 시 처리
-        if (rdp_r, rdp_c) == (mr, mc):
-            santa_score[santa] += D
-            wakeup_turns[santa] = turn + 2
-            visited[sr][sc] = 0
-            move_santa(santa, mr, mc, -dr, -dc, D)
-        else:
-            visited[sr][sc] = 0
-            visited[mr][mc] = santa
-            Santas[santa] = [mr, mc]
-
-    # 3. 점수획득: alive산타는 +1점
-    for santa in range(1, P + 1):
-        if alive[santa] == 1:
-            santa_score[santa] += 1
-
-print(*santa_score[1:])
+print(*score[1:])
