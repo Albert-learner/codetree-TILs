@@ -12,8 +12,8 @@ def print_rectangle(n):
 N = int(input())
 print_rectangle(N)
 
-row_num = int(input())
-
+# # 모범 답안
+# row_num = int(input())
 
 # # n개의 줄에 걸쳐 특정 문자열을 출력하는 함수입니다.
 # def print_num(n):
