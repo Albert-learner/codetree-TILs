@@ -2,9 +2,7 @@ n1, n2 = map(int, input().split())
 a_seq = list(map(int, input().split()))
 b_seq = list(map(int, input().split()))
 
-for b in b_seq:
-    if b not in a_seq:
-        print("No")
-        break
-
-print("Yes")
+if all(elem in a_seq for elem in b_seq):
+    print("Yes")
+else:
+    print("No")
