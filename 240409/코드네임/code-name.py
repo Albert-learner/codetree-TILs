@@ -4,9 +4,9 @@ class Members:
         self.score = score
         self.mem_lst = []
         self.mem_lst.append([name, score])
+        self.mem_lst.sort(key = lambda x: x[1])
 
     def print_min_member(self):
-        self.mem_lst.sort(key = lambda x: x[1])
         print(*self.mem_lst[0])
 
 members = []
