@@ -1,95 +1,104 @@
 Y, M, D = map(int, input().split())
 
-if Y in range(1, 3001):
-    if not((Y % 4 == 0 and Y % 100 != 0) or Y % 400 == 0):
-        if M in [12, 1, 2]:
-            if M in [12, 1]:
-                if D in range(1, 32):
-                    print("Winter")
+def is_leap_year(y):
+    if (y % 4 == 0 and y % 100 != 0) or y % 400 == 0:
+        return True
+    
+    return False
+
+def is_right_day(y, m, d):
+    if not is_leap_year(y):
+        if m in [12, 1, 2]:
+            if m in [12, 1]:
+                if d in range(1, 32):
+                    return "Winter"
                 else:
-                    print(-1)
+                    return -1
             else:
-                if D in range(1, 31):
-                    print("Winter")
+                if d in range(1, 32):
+                    return "Winter"
                 else:
-                    print(-1)
-        elif M in [3, 4, 5]:
-            if M in [3, 5]:
-                if D in range(1, 32):
-                    print("Spring")
+                    return -1
+        elif m in [3, 4, 5]:
+            if m in [3, 5]:
+                if d in range(1, 32):
+                    return "Spring"
                 else:
-                    print(-1)
+                    return -1
             else:
-                if D in range(1, 31):
-                    print("Spring")
+                if d in range(1, 31):
+                    return "Spring"
                 else:
-                    print(-1)
-        elif M in [6, 7, 8]:
-            if M in [7, 8]:
-                if D in range(1, 32):
-                    print("Summer")
+                    return -1
+        elif m in [6, 7, 8]:
+            if m in [7, 8]:
+                if d in range(1, 32):
+                    return "Summer"
                 else:
-                    print(-1)
+                    return -1
             else:
-                if D in range(1, 31):
-                    print("Summer")
+                if d in range(1, 31):
+                    return "Summer"
                 else:
-                    print(-1)
-        elif M in [9, 10, 11]:
-            if M == 10:
-                if D in range(1, 32):
-                    print("Fall")
-                else:
-                    print(-1)
+                    return -1
+        elif m in [9, 10, 11]:
+            if m == 10:
+                if d in range(1, 32):
+                    return "Fall"
+                return -1
             else:
-                if D in range(1, 31):
-                    print("Fall")
+                if d in range(1, 31):
+                    return "Fall"
                 else:
-                    print(-1)
+                    return -1
         else:
-            print(-1)
+            return -1
     else:
-        if M != 2:
-            if M in [12, 1]:
-                if D in range(1, 32):
-                    print("Winter")
+        if m != 2:
+            if m in [12, 1]:
+                if d in range(1, 32):
+                    return "Winter"
                 else:
-                    print(-1)
-            elif M in [3, 4, 5]:
-                if M in [3, 5]:
-                    if D in range(1, 32):
-                        print("Spring")
+                    return -1
+            elif m in [3, 4, 5]:
+                if m in [3, 5]:
+                    if d in range(1, 32):
+                        return "Spring"
                     else:
-                        print(-1)
+                        return -1
                 else:
-                    if D in range(1, 31):
-                        print("Spring")
+                    if d in range(1, 31):
+                        return "Spring"
                     else:
-                        print(-1)
-            elif M in [6, 7, 8]:
-                if M in [7, 8]:
-                    if D in range(1, 32):
-                        print("Summer")
+                        return -1
+            elif m in [6, 7, 8]:
+                if m in [7, 8]:
+                    if d in range(1, 32):
+                        return "Summer"
                     else:
-                        print(-1)
+                        return -1
                 else:
-                    if D in range(1, 31):
-                        print("Summer")
+                    if d in range(1, 31):
+                        return "Summer"
                     else:
-                        print(-1)
-            elif M in [9, 10, 11]:
-                if M == 10:
-                    if D in range(1, 32):
-                        print("Fall")
+                        return -1
+            elif m in [9, 10, 11]:
+                if m == 10:
+                    if d in range(1, 32):
+                        return "Fall"
                     else:
-                        print(-1)
+                        return -1
                 else:
-                    if D in range(1, 31):
-                        print("Fall")
+                    if d in range(1, 31):
+                        return "Fall"
                     else:
-                        print(-1)
+                        return -1
+            else:
+                return -1
         else:
-            if D in range(1, 30):
-                print("Winter")
-else:
-    print(-1)
+            if d in range(1, 30):
+                return "Winter"
+            else:
+                return False
+    
+print(is_right_day(Y, M, D))
