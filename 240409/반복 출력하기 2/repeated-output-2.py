@@ -7,4 +7,4 @@ def print_str(N):
     print_str(N - 1)
     print("HelloWorld")
 
-print_str(4)
+print_str(N)
