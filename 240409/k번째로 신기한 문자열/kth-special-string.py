@@ -4,7 +4,7 @@ words = [input() for _ in range(N)]
 
 satisfies = []
 for word in words:
-    if T in word:
+    if word.startswith(T):
         satisfies.append(word)
 
 satisfies.sort()
