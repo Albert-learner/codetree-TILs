@@ -1,16 +1,12 @@
 N = int(input())
-areas_lst = [list(map(int, input().split())) for _ in range(N)]
+lines_lst = [list(map(int, input().split())) for _ in range(N)]
 
-start_lst = list(zip(*areas_lst))[0]
-offset = min(sorted(start_lst)) if min(sorted(start_lst)) < 0 else 0
-max_len = max(list(zip(*areas_lst))[1])
+inter_lines = {}
+for start, end in lines_lst:
+    for i in range(start, end):
+        if i in inter_lines:
+            inter_lines[i] += 1
+        else:
+            inter_lines[i] = 1
 
-checked = [0] * max_len
-for start, end in areas_lst:
-    start += offset
-    end += offset
-
-    for idx in range(start, end):
-        checked[idx] += 1
-
-print(max(checked))
+print(max(inter_lines.values()))
