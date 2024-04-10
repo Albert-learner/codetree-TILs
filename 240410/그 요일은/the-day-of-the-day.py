@@ -2,7 +2,7 @@ m1, d1, m2, d2 = map(int, input().split())
 find_day = input()
 
 days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-months = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+months = [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
 def get_num(f_day):
     for day_idx, day in enumerate(days):
@@ -14,7 +14,7 @@ d1 += day_num
 
 def total_days(m, d):
     t_days = 0
-    for i in range(m):
+    for i in range(1, m):
         t_days += months[i]
 
     t_days += d
