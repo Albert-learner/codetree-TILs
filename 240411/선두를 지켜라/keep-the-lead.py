@@ -1,20 +1,20 @@
 N, M = map(int, input().split())
-a_moves = [list(map(int, input().split())) for _ in range(N)]
-b_moves = [list(map(int, input().split())) for _ in range(M)]
+a_dist, b_dist = [0], [0]
 
-a_first, b_first = a_moves[0], b_moves[0]
-change_cnts = 0
-front_runner = 'A' if a_first[0] > b_first[0] else 'B' if a_first[0] < b_first[0] else ''
-for (a_vel, _), (b_vel, _) in zip(a_moves[1:], b_moves[1:]):
-    if a_vel > b_vel and front_runner == 'A':
-        continue
-    elif a_vel < b_vel and front_runner == 'A':
-        change_cnts += 1
-        front_runner = 'B'
-    elif a_vel > b_vel and front_runner == 'B':
-        change_cnts += 1
-        front_runner = 'A'
-    elif a_vel < b_vel and front_runner == 'B':
-        continue
+def make_dist(p_num, which_dist):
+    for i in range(p_num):
+        velocity, times = map(int, input().split())
+        for j in range(times):
+            which_dist.append(velocity + which_dist[-1])
 
-print(change_cnts)
+make_dist(N, a_dist)
+make_dist(M, b_dist)
+
+compare = [a_dist[i] - b_dist[i] for i in range(len(a_dist)) if a_dist[i] != b_dist[i]]
+
+answer = 0
+for i in range(1, len(compare)):
+    if compare[i] * compare[i - 1] < 0:
+        answer += 1
+
+print(answer)
