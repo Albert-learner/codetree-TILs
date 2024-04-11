@@ -48,7 +48,7 @@ for turn in range(1, M + 1):
         break
 
     # 1-1. 루돌프 이동: 가장 가까운 산타 찾기
-    close_dist = N ** 2
+    close_dist = 2 * N ** 2
     for snum in range(1, P + 1):
         # 탈락한 산타는 skip
         if alives[snum] == 0:
