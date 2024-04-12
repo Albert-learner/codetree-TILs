@@ -4,6 +4,7 @@ dir_num = 0
 move_dirs = {0: (0, 1), 1: (1, 0), 2: (0, -1), 3: (-1, 0)}
 
 x, y = 0, 0
+coords = []
 answer, times = 0, 0
 for move in moves:
     if move == 'L':
@@ -15,11 +16,16 @@ for move in moves:
         if (x, y) == (0, 0):
             times += 1
             answer += times
+            coords.append((x, y))
             break
 
+        coords.append((x, y))
     if (x, y) == (0, 0):
         break
 
     times += 1
+
+if (0, 0) not in coords:
+    answer = -1
 
 print(answer)
