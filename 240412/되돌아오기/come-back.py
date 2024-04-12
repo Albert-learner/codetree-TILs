@@ -10,17 +10,17 @@ for _ in range(N):
 
     for _ in range(size):
         x, y = x + move_dirs[mv_dir][0], y + move_dirs[mv_dir][1]
+        coords.append((x, y))
+        times += 1
+
         if (x, y) == (0, 0):
-            times += 1
-            coords.append((x, y))
             answer += times
             break
-        else:
-            coords.append((x, y))
 
-        times += 1
+    if (x, y) == (0, 0):
+        break
 
 if (0, 0) not in coords:
     answer = -1
-    
+
 print(answer)
