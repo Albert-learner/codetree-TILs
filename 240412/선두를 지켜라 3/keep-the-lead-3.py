@@ -10,11 +10,20 @@ def make_dist(player, p_dist):
 make_dist(N, a_dist)
 make_dist(M, b_dist)
 
-compare = [a_dist[i] - b_dist[i] for i in range(len(a_dist))][1:]
-answer = 0
+cnts = 0
+key = 0
+prev_key = -100
+for i in range(1, len(a_dist)):
+    if a_dist[i] > b_dist[i]:
+        key = -1
+    elif a_dist[i] == b_dist[i]:
+        key = 0
+    else:
+        key = 1
 
-for idx in range(1, len(compare)):
-    if compare[idx] * compare[idx - 1] <= 0:
-        answer += 1
+    if key != prev_key:
+        cnts += 1
 
-print(answer)
+    prev_key = key
+
+print(cnts)
