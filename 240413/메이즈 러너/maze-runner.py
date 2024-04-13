@@ -25,7 +25,7 @@ def move(paths):
                 continue
 
         # 그 다음 column check
-        elif column != 0:
+        if column != 0:
             move = 1 if column > 0 else -1
             newpx, newpy = x, y + move
             if 0 <= newpx < N and 0 <= newpy < N and miro[newpx][newpy] == 0:
