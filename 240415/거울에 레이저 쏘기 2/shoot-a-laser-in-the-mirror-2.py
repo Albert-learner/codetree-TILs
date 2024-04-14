@@ -18,7 +18,6 @@ rev_slash_dir = {
     3: 0
 }
 
-K = 11
 lazer_start_dir = 0
 r, c = 0, 0
 
@@ -45,4 +44,4 @@ while 0 <= r < N and 0 <= c < N:
     r, c = r + dx[lazer_start_dir], c + dy[lazer_start_dir]
     cnts += 1
 
-print(cnts + 1)
+print(cnts)
