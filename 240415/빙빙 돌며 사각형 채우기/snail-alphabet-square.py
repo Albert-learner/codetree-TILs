@@ -15,7 +15,7 @@ for _ in range(N * M):
 
     x += move_dirs[dir_num][0]
     y += move_dirs[dir_num][1]
-    move_chr = chr(ord(move_chr) + 1)
+    move_chr = chr(ord(move_chr) + 1) if move_chr != 'Z' else 'A'
 
 for row in board:
     print(*row)
