@@ -6,7 +6,7 @@ void print_rect_numbers(int n)
 {
     for (int i = 1; i <= int(pow(n, 2)); i++)
     {
-        if (i % 4 == 0)
+        if (i % n == 0)
         {
             if (i > 10)
                 cout << i - 9 << endl;
