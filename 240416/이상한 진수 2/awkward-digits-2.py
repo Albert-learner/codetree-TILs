@@ -1,6 +1,6 @@
 a_bin = input()
 
-zero_cnts = a_bin.count('0')
+zero_cnts = a_bin.count('0') if a_bin.count('0') > 1 else 1
 zero_cnts -= 1
 
 bin_lst = [1 for _ in range(len(a_bin))]
