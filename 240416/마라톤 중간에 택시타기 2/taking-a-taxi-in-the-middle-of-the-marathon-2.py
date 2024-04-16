@@ -9,7 +9,7 @@ for i in range(N - 1):
     total += distance(chkpnts[i][0], chkpnts[i][1], chkpnts[i + 1][0], chkpnts[i + 1][1])
 
 answer = float("inf")
-for i in range(1, N - 2):
+for i in range(1, N - 1):
     check = total - distance(chkpnts[i - 1][0], chkpnts[i - 1][1], chkpnts[i][0], chkpnts[i][1])\
                   - distance(chkpnts[i][0], chkpnts[i][1], chkpnts[i + 1][0], chkpnts[i + 1][1])\
                   + distance(chkpnts[i - 1][0], chkpnts[i - 1][1], chkpnts[i + 1][0], chkpnts[i + 1][1])
