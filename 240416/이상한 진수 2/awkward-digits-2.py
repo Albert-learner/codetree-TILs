@@ -1,17 +1,17 @@
-a_bin = input()
+a_bin = list(map(int, input()))
 
-if a_bin == '1':
-    print(0)
+indicator = True
+for i in range(len(a_bin)):
+    if a_bin[i] == 0:
+        a_bin[i] = 1
+        indicator = False
+        break
+
+num = 0
+for i in range(len(a_bin)):
+    num = num * 2 + a_bin[i]
+
+if indicator:
+    print(num - 1)
 else:
-    zero_cnts = a_bin.count('0') 
-    zero_cnts -= 1
-
-    bin_lst = [1 for _ in range(len(a_bin))]
-    for i in range(zero_cnts):
-        bin_lst[-i - 1] = 0
-
-    num = 0
-    for idx in range(len(bin_lst)):
-        num = num * 2 + bin_lst[idx]
-
     print(num)
