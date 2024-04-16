@@ -1,16 +1,19 @@
 N = int(input())
 chkpnts = [list(map(int, input().split())) for _ in range(N)]
 
-start, end = chkpnts[0], chkpnts[-1]
-mid_chkpnts = chkpnts[1:-1]
+def distance(x1, y1, x2, y2):
+    return abs(x1 - x2) + abs(y1 - y2)
 
-answer = 0
-diffs_lst = []
-for x, y in mid_chkpnts:
-    st_diff = int(abs(start[0] - x)) + int(abs(start[1] - y))
-    ed_diff = int(abs(end[0] - x)) + int(abs(end[1] - y))
+total = 0
+for i in range(N - 1):
+    total += distance(chkpnts[i][0], chkpnts[i][1], chkpnts[i + 1][0], chkpnts[i + 1][1])
 
-    diffs_lst.append([st_diff, ed_diff])
+answer = float("inf")
+for i in range(1, N - 2):
+    check = total - distance(chkpnts[i - 1][0], chkpnts[i - 1][1], chkpnts[i][0], chkpnts[i][1])\
+                  - distance(chkpnts[i][0], chkpnts[i][1], chkpnts[i + 1][0], chkpnts[i + 1][1])\
+                  + distance(chkpnts[i - 1][0], chkpnts[i - 1][1], chkpnts[i + 1][0], chkpnts[i + 1][1])
 
-diffs_lst = sorted(diffs_lst, key = lambda x: sum(x))
-print(sum(diffs_lst[0]))
+    answer = min(answer, check)
+
+print(answer)
