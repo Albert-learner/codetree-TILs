@@ -17,7 +17,7 @@ def find_carry(x, y, z):
             z_lst.insert(0, 0)
 
     for x_elem, y_elem, z_elem in zip(x_lst, y_lst, z_lst):
-        if x_elem + y_elem + z_elem >= 10:
+        if x_elem + y_elem + z_elem > 9:
             return False
         else:
             max_sum = max(max_sum, x_elem + y_elem + z_elem)
