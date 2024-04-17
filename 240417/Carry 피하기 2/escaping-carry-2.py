@@ -6,13 +6,13 @@ def find_carry(x, y, z):
     x_lst, y_lst, z_lst = list(map(int, str(x))), list(map(int, str(y))), list(map(int, str(z)))
     max_sum = 0
 
-    if len(x_lst) <= 5:
+    if len(x_lst) < 5:
         for _ in range(5 - len(x_lst)):
             x_lst.insert(0, 0)
-    if len(y_lst) <= 5:
+    if len(y_lst) < 5:
         for _ in range(5 - len(y_lst)):
             y_lst.insert(0, 0)
-    if len(z_lst) <= 5:
+    if len(z_lst) < 5:
         for _ in range(5 - len(z_lst)):
             z_lst.insert(0, 0)
 
