@@ -16,4 +16,4 @@ def generate_all_exclusions(lst):
     return exclusions
 
 diffs = sorted(generate_all_exclusions(n_lst), key = lambda x: abs(S - x))
-print(diffs[0] - S)
+print(abs(diffs[0] - S))
