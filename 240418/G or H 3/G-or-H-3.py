@@ -5,15 +5,24 @@ for _ in range(N):
     pos = int(pos)
     people.append([pos, alpha])
 
-line = [0] * 10001
+scale = 0
+K += 1
+line = [0] * 20001
 for pos, alpha in people:
     if alpha == 'G':
         line[pos] = 1
     else:
         line[pos] = 2
+    
+    scale = max(scale, pos)
 
-max_sum = 0
-for i in range(1, 1000 - K + 2):
-    max_sum = max(max_sum, sum(line[i:i + K + 1]))
+result = 0
+for i in range(1, K + 1):
+    result += line[i]
 
-print(max_sum)
+cur = result
+for i in range(2, scale + 1):
+    cur = cur - line[i - 1] + line[i + K - 1]
+    result = max(result, cur)
+
+print(result)
