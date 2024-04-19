@@ -6,7 +6,7 @@ answer = N ** 3
 for i in range(1, N + 1):
     for j in range(1, N + 1):
         for k in range(1, N + 1):
-            if i - a >= 3 and j - b >= 3 and k - c >= 3:
+            if abs(i - a) > 2 and abs(j - b) > 2 and abs(k - c) > 2:
                 answer -= 1
 
 print(answer)
