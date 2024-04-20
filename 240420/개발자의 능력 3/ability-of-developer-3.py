@@ -7,7 +7,7 @@ def get_diff(i, j):
     return abs(sum1 - sum2)
 
 min_diff = 1000001
-for i in range(len(abilities)):
+for i in range(0, len(abilities)):
     for j in range(i + 1, len(abilities)):
         min_diff = min(min_diff, get_diff(i, j))
 
