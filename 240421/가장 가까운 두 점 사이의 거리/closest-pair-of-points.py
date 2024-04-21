@@ -9,6 +9,6 @@ for i in range(N):
     del tmp_x_lst[i]
     del tmp_y_lst[i]
 
-    dsts.append((max(tmp_x_lst) - min(tmp_x_lst) ** 2 + (max(tmp_y_lst) - min(tmp_y_lst) ** 2)))
+    dsts.append(((max(tmp_x_lst) - min(tmp_x_lst)) ** 2 + (max(tmp_y_lst) - min(tmp_y_lst)) ** 2))
 
 print(min(dsts))
