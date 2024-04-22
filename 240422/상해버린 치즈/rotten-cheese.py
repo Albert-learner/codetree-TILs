@@ -9,7 +9,7 @@ for i in range(N):
 
 ache_times = sorted([tuple(map(int, input().split())) for _ in range(S)], key = lambda x: x[-1])
 
-answer = set()
+answer = set(range(1, M + 1))
 cnts = [0] * (M + 1)
 for ache_person, ache_time in ache_times:
     cheezes = set()
@@ -19,12 +19,7 @@ for ache_person, ache_time in ache_times:
 
         cheezes.add(eat_cheeze_num)
     
-    for eat_cheeze in cheezes:
-        cnts[eat_cheeze] += 1
-
-for i in range(1, M + 1):
-    if cnts[i] == S:
-        answer.add(i)
+    answer = answer & cheezes
 
 max_medicines = 0
 for eat_cheeze in eat_cheezes:
