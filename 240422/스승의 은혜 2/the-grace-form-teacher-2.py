@@ -1,5 +1,6 @@
 N, B = map(int, input().split())
 prices = [int(input()) for _ in range(N)]
+prices.sort()
 
 max_cnts = 0
 for i in range(N):
