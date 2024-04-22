@@ -1,35 +1,39 @@
 N, M, D, S = map(int, input().split())
-eat_cheezes = [[] for _ in range(N)]
-for _ in range(D):
-    p, m, t = map(int, input().split())
-    eat_cheezes[p - 1].append([m, t])
 
-for i in range(N):
-    eat_cheezes[i].sort(key = lambda x: x[-1])
+class EatCheezes:
+    def __init__(self, p, m, t):
+        self.p, self.m, self.t = p, m, t
 
-ache_times = sorted([tuple(map(int, input().split())) for _ in range(S)], key = lambda x: x[-1])
+class AcheTimes:
+    def __init__(self, p, t):
+        self.p, self.t = p, t
 
-answer = set(range(1, M + 1))
-cnts = [0] * (M + 1)
-for ache_person, ache_time in ache_times:
-    cheezes = set()
-    for eat_cheeze_num, eat_time in eat_cheezes[ache_person - 1]:
-        if eat_time >= ache_time:
-            break
-
-        cheezes.add(eat_cheeze_num)
-    
-    answer = answer & cheezes
+eat_cheezes = [EatCheezes(*tuple(map(int, input().split()))) for _ in range(D)]
+ache_times = [AcheTimes(*tuple(map(int, input().split()))) for _ in range(S)]
 
 max_medicines = 0
-for eat_cheeze in eat_cheezes:
-    found = False
-    for cheeze_num, eat_time in eat_cheeze:
-        if cheeze_num in answer:
-            found = True
-            break
-    
-    if found:
-        max_medicines += 1
+for i in range(1, M + 1):
+    time = [0] * (N + 1)
+    for eat_cheeze in eat_cheezes:
+        if eat_cheeze.m != i:
+            continue
+
+        person = eat_cheeze.p
+        if time[person] == 0 or time[person] > eat_cheeze.t:
+            time[person] = eat_cheeze.t
+
+    possible = True
+    for ache_time in ache_times:
+        person = ache_time.p
+        if time[person] == 0 or time[person] >= ache_time.t:
+            possible = False
+
+    medicines = 0
+    if possible:
+        for j in range(1, N + 1):
+            if time[j] != 0:
+                medicines += 1
+
+        max_medicines = max(max_medicines, medicines)
 
 print(max_medicines)
