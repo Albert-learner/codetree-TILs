@@ -4,7 +4,8 @@ gifts_info = [list(map(int, input().split())) for _ in range(N)]
 max_students = 0
 for i in range(N):
     gifts_info[i][0] //= 2
-    prices = [gifts_info[j][0] + gifts_info[j][1] for j in range(N)]
+    prices = [(gifts_info[j][0] + gifts_info[j][1]) for j in range(N)]
+    gifts_info[i][0] *= 2
     prices.sort()
 
     students, cur_prices = 0, 0
