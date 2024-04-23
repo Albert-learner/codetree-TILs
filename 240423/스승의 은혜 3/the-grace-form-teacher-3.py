@@ -1,6 +1,6 @@
 N, B = map(int, input().split())
 gifts_info = [list(map(int, input().split())) for _ in range(N)]
-gifts_info.sort()
+gifts_info.sort(key = lambda x: sum(x))
 
 max_students = 0
 for i in range(N):
