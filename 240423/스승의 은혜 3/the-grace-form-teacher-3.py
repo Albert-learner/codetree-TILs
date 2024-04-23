@@ -1,19 +1,21 @@
 N, B = map(int, input().split())
 gifts_info = [list(map(int, input().split())) for _ in range(N)]
-gifts_info.sort(key = lambda x: sum(x))
 
 max_students = 0
 for i in range(N):
-    prices = gifts_info[i][1]
-    for j in range(N):
-        if i == j:
-            prices += gifts_info[j][0] // 2
-        else:
-            prices += gifts_info[j][0]
+    gifts_info[i][0] /= 2
+    prices = [(gifts_info[j][0] + gifts_info[j][1]) for j in range(N)]
+    prices.sort()
 
-        if prices <= B:
-            max_students = max(max_students, j + 1)
-        else:
+    students, cur_prices = 0, 0
+
+    for j in range(N):
+        if cur_prices + prices[j] > B:
             break
+
+        cur_prices += prices[j]
+        students += 1
+
+    max_students = max(max_students, students)
 
 print(max_students)
