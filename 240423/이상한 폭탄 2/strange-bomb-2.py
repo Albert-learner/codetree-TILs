@@ -2,15 +2,15 @@ N, K = map(int, input().split())
 nums = [int(input()) for _ in range(N)]
 
 answer = -1
-explode_nums = []
-nums_cnt = dict.fromkeys(sorted(set(nums)), 0)
+for i in range(N - K + 1):
+    bomb_num = -1
+    for j in range(i + 1, i + K + 1):
+        if abs(i - j) > K or j > len(nums) - 1:
+            continue
 
-for num_idx, num in enumerate(nums):
-    if num_idx < K and num in nums[num_idx + 1:num_idx + K + 1]:
-        explode_nums.append(num)
-    elif num_idx + K <= len(nums) - 1 and num in nums[num_idx + 1:]:
-        explode_nums.append(num)
-    elif K <= num_idx < len(nums) + K - 1 and num in nums[num_idx - K // 2:num_idx + K // 2]:
-        explode_nums.append(num)
+        if nums[i] == nums[j]:
+            bomb_num = nums[i]
 
-print(max(set(explode_nums)))
+    answer = max(answer, bomb_num)
+
+print(answer)
