@@ -1,14 +1,17 @@
 N = int(input())
+turnovers = [list(map(int, input().split())) for _ in range(N)]
 
-max_score = 0
-for _ in range(N):
-    a, b, c = map(int, input().split())
+max_cnts = 0
+for stone in range(1, 4):
+    maps = [0] * 4
+    cnts = 0
+    maps[stone] = 1
+    for j in range(N):
+        turnovers[j][0], turnovers[j][1] = turnovers[j][1], turnovers[j][0]
+        maps[turnovers[j][0]], maps[turnovers[j][1]] = maps[turnovers[j][1]], maps[turnovers[j][0]]
+        if maps[turnovers[j][2]] == 1:
+            cnts += 1
 
-    tmp = [0, 0, 0]
-    tmp[a - 1] = 1
-    tmp[b - 1] = 2
+    max_cnts = max(max_cnts, cnts)
 
-    if tmp[c - 1] == 1:
-        max_score += 1
-
-print(max_score)
+print(max_cnts)
