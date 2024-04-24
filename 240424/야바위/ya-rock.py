@@ -6,10 +6,9 @@ for stone in range(1, 4):
     maps = [0] * 4
     cnts = 0
     maps[stone] = 1
-    for j in range(N):
-        turnovers[j][0], turnovers[j][1] = turnovers[j][1], turnovers[j][0]
-        maps[turnovers[j][0]], maps[turnovers[j][1]] = maps[turnovers[j][1]], maps[turnovers[j][0]]
-        if maps[turnovers[j][2]] == 1:
+    for a, b, c in turnovers:
+        maps[a], maps[b] = maps[b], maps[a]
+        if maps[c]:
             cnts += 1
 
     max_cnts = max(max_cnts, cnts)
