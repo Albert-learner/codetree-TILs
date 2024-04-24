@@ -5,7 +5,7 @@ max_cnts = 0
 for num in range(1, 101):
     cnts = 0
     for i in range(N):
-        for j in range(i, N):
+        for j in range(i + 1, N):
             if (n_lst[i] + n_lst[j]) / 2 == num:
                 cnts += 1
 
