@@ -1,21 +1,40 @@
-from collections import Counter
-
 N = int(input())
-points = [tuple(map(int, input().split())) for _ in range(N)]
-x_lst, y_lst = list(list(zip(*points))[0]), list(list(zip(*points))[1])
+x, y = [], []
+xy = [[0] * 11 for _ in range(11)]
+cases = ["xxx", "xxy", "xyx", "yxx", "yyy", "yyx", "yxy", "xyy"]
 
-cntr_x = Counter(x_lst)
-cntr_y = Counter(y_lst)
+for _ in range(N):
+    xi, yi = map(int, input().split())
+    x.append(xi)
+    y.append(yi)
+    xy[xi][yi] = 1
 
-answer = 0
-lines = 0
-for x, x_cnt in cntr_x.items():
-    if x_cnt >= 2:
-        lines += 1
+def go(n, chr):
+    sum_ = 0
+    if chr == 'x':
+        for i in range(11):
+            sum_ += xy[i][n]
+    else:
+        for i in range(11):
+            sum_ += xy[n][i]
 
-for y, y_cnt in cntr_y.items():
-    if y_cnt >= 2:
-        lines += 1
+    return sum_
 
-answer = 1 if lines == 3 else 0
-print(answer)
+for cse in cases:
+    c1, c2, c3 = cse[0], cse[1], cse[2]
+    for i in range(6):
+        for j in range(6):
+            for k in range(6):
+                if i == j or j == k or k == i:
+                    continue
+
+                sum_ = 0
+                sum_ += go(i, c1)
+                sum_ += go(j, c2)
+                sum_ += go(k, c3)
+
+                if sum_ == N:
+                    print(1)
+                    exit()
+
+print(0)
