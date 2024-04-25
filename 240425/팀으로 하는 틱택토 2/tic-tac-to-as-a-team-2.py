@@ -1,4 +1,4 @@
-board = [list(input()) for _ in range(3)]
+board = [input().strip() for _ in range(3)]
 
 teams = set()
 for i in range(3):
