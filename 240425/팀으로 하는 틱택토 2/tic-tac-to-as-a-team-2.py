@@ -1,4 +1,7 @@
-board = [input().strip() for _ in range(3)]
+from sys import stdin
+board = [0 for _ in range(3)]
+for i in range(3):
+    board[i] = stdin.readline().strip()
 
 teams = set()
 for i in range(3):
