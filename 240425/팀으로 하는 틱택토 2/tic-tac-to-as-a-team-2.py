@@ -1,7 +1,4 @@
-from sys import stdin
-board = [0 for _ in range(3)]
-for i in range(3):
-    board[i] = stdin.readline().strip()
+board = [list(map(int, input())) for _ in range(3)]
 
 teams = set()
 for i in range(3):
@@ -15,7 +12,7 @@ for i in range(3):
 for j in range(3):
     chk = set()
     for i in range(3):
-        chk.add(board[j][i])
+        chk.add(board[i][j])
     
     if len(chk) == 2:
         teams.add(tuple(sorted(chk)))
