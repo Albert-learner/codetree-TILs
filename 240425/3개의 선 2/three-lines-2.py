@@ -17,5 +17,5 @@ for y, y_cnt in cntr_y.items():
     if y_cnt >= 2:
         lines += 1
 
-answer = 1 if lines >= 3 else 0
+answer = 1 if lines == 3 else 0
 print(answer)
