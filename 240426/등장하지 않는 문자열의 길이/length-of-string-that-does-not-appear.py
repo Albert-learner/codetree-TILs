@@ -25,9 +25,7 @@ min_length = 0
 patterns_sort = sorted(patterns, key = lambda x: x[0][1], reverse=True)
 for pattern_lst in patterns_sort:
     patterns, pattern_cnts = list(zip(*pattern_lst))[0], list(zip(*pattern_lst))[1]
-    if 2 in pattern_cnts:
-        continue
-    else:
+    if all(pattern_cnt < 2 for pattern_cnt in pattern_cnts):
         min_length = len(patterns[0])
         break
 
