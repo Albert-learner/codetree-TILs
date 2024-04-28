@@ -7,7 +7,7 @@ for x, y in lines:
     for i in range(x, y + 1):
         total_line[i] += 1
 
-if 3 in total_line:
+if N in total_line:
     print("Yes")
 else:
     print("No")
