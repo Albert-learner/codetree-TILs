@@ -3,20 +3,14 @@ hills = [int(input()) for _ in range(N)]
 hills.sort()
 
 costs = 0
-half_hills = len(hills) // 2
-finish = False
-for i in range(half_hills):
-    for j in range(len(hills) - 1, 0, -1):
-        if hills[j] - hills[i] > 17:
-            costs += (hills[i + 1] - hills[i]) ** 2
-            costs += (hills[j] - hills[j - 1]) ** 2
-            hills[i] = hills[i + 1]
-            hills[j] = hills[j - 1]
-        else:
-            finish = True
-            break
-    
-    if finish:
-        break
-            
+min_pos, max_pos = 0, -1
+while hills[max_pos] - hills[min_pos] > 17:
+    min_pos += 1
+    max_pos -= 1
+
+for i in range(min_pos):
+    costs += (hills[min_pos] - hills[i]) ** 2
+
+for i in range(-1, max_pos, -1):
+    costs += (hills[max_pos] - hills[i]) ** 2
 print(costs)
