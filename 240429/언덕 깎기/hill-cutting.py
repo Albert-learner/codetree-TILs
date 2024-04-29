@@ -1,3 +1,4 @@
+# 모범답안
 import sys
 
 INT_MAX = sys.maxsize
