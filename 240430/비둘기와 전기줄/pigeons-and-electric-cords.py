@@ -9,6 +9,7 @@ for i in range(1, len(birds)):
     else:
         groups.append(cur_group)
         cur_group = [birds[i]]
+groups.append(cur_group)
 
 cross_overs_min = 0
 for group in groups:
