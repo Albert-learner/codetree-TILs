@@ -12,4 +12,4 @@ for idx, cst in enumerate(ones):
         max_dst = ones[idx + 1] - ones[idx]
         start, end = ones[idx], ones[idx + 1]
 
-print((start + end) // 2)
+print(abs(end - start) // 2)
