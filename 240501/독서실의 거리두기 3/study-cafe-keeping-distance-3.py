@@ -1,15 +1,26 @@
 N = int(input())
 seats = list(map(int, input()))
 
-ones = [idx for idx, cst in enumerate(seats) if cst == 1]
+def get_min_diff(lst):
+    cnts = 0
+    diffs = []
+    for j in range(len(lst)):
+        if lst[j] == 1:
+            diffs.append(cnts)
+            cnts = 0
 
-max_dst, start, end = 0, 0, 0
-for idx, cst in enumerate(ones):
-    if idx == len(ones) - 1:
-        break
+        cnts += 1
 
-    if ones[idx + 1] - ones[idx] > max_dst:
-        max_dst = ones[idx + 1] - ones[idx]
-        start, end = ones[idx], ones[idx + 1]
+    return min(diffs[1::])
+    
 
-print(abs(end - start) // 2)
+max_dst = -1
+for i in range(N):
+    if seats[i] == 0:
+        seats[i] = 1
+
+        max_dst = max(max_dst, get_min_diff(seats))
+
+        seats[i] = 0
+
+print(max_dst)
