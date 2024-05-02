@@ -7,7 +7,7 @@ for _ in range(N):
 
 a_score, b_score = 0, 0
 change_cnts = 0
-prev_winner, winner = '', ''
+prev_winner, winner = 'AB', 'AB'
 for ch_idx, (player, ch_score) in enumerate(changes):
     if player == 'A':
         a_score += ch_score
@@ -15,32 +15,20 @@ for ch_idx, (player, ch_score) in enumerate(changes):
         b_score += ch_score
 
     if ch_idx != 0:
-        if player == 'A':
-            a_score += ch_score
-        elif player == 'B':
-            b_score += ch_score
-
         if a_score > b_score:
             winner = 'A'
         elif a_score < b_score:
             winner = 'B'
-        elif a_score > 0 and a_score == b_score:
-            change_cnts += 1
-        elif a_score == 0 and a_score == b_score:
-            continue
-
-        if prev_winner != winner:
-            change_cnts += 1
-            prev_winner, winner = winner, ''
+        else:
+            winner = 'AB'
     else:
-        if player == 'A':
-            a_score += ch_score
-            prev_winner, winner = player, player
-        elif player == 'B':
-            b_score += ch_score
-            prev_winner, winner = player, player
+        if a_score < b_score:
+            winner = 'B'
+        elif a_score > b_score:
+            winner = 'A'
 
-        if a_score != 0 or b_score != 0:
-            change_cnts += 1
+    if prev_winner != winner:
+        change_cnts += 1
+        prev_winner, winner = winner, ''
 
 print(change_cnts)
