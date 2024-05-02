@@ -13,7 +13,7 @@ for _ in range(N):
     elif c == 'B':
         b_scores[idx] = b_scores[idx - 1] + ch_score
 
-    if a_scores[idx] == b_scores[idx]:
+    if a_scores[idx] == a_scores[idx - 1] and b_scores[idx] == b_scores[idx - 1]:
         a_scores[idx], b_scores[idx] = a_scores[idx - 1], b_scores[idx - 1]
 
 for i in range(N):
