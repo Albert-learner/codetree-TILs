@@ -1,30 +1,44 @@
 N = int(input())
-a_scores = [0] * (N + 1)
-b_scores = [0] * (N + 1)
-
-idx, cnts = 0, 0
+changes = []
 for _ in range(N):
     c, s = input().split()
     ch_score = int(s)
-    idx += 1
+    changes.append([c, ch_score])
 
-    if a_scores[idx] == a_scores[idx - 1] and b_scores[idx] == b_scores[idx - 1]:
-        a_scores[idx], b_scores[idx] = a_scores[idx - 1], b_scores[idx - 1]
+a_score, b_score = 0, 0
+change_cnts = 0
+prev_winner, winner = '', ''
+for ch_idx, (player, ch_score) in enumerate(changes):
+    if player == 'A':
+        a_score += ch_score
+    elif player == 'B':
+        b_score += ch_score
 
-    if c == 'A':
-        a_scores[idx] = a_scores[idx - 1] + ch_score
-    elif c == 'B':
-        b_scores[idx] = b_scores[idx - 1] + ch_score
+    if ch_idx != 0:
+        if player == 'A':
+            a_score += ch_score
+        elif player == 'B':
+            b_score += ch_score
 
-    
+        if a_score > b_score:
+            winner = 'A'
+        elif a_score < b_score:
+            winner = 'B'
+        else:
+            change_cnts += 1
 
-for i in range(N):
-    if (a_scores[i] == b_scores[i] and a_scores[i + 1] > b_scores[i + 1]) or \
-       (a_scores[i] == b_scores[i] and a_scores[i + 1] < b_scores[i + 1]) or \
-       (a_scores[i] > b_scores[i] and a_scores[i + 1] == b_scores[i + 1]) or \
-       (a_scores[i] > b_scores[i] and a_scores[i + 1] < b_scores[i + 1]) or \
-       (a_scores[i] < b_scores[i] and a_scores[i + 1] == b_scores[i + 1]) or \
-       (a_scores[i] < b_scores[i] and a_scores[i + 1] > b_scores[i + 1]):
-       cnts += 1
+        if prev_winner != winner:
+            change_cnts += 1
+            prev_winner, winner = winner, ''
+    else:
+        if player == 'A':
+            a_score += ch_score
+            prev_winner, winner = player, player
+        elif player == 'B':
+            b_score += ch_score
+            prev_winner, winner = player, player
 
-print(cnts)
+        if a_score != 0 or b_score != 0:
+            change_cnts += 1
+
+print(change_cnts)
