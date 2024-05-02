@@ -38,6 +38,7 @@ for ch_idx, (player, ch_score) in enumerate(changes):
             b_score += ch_score
             prev_winner, winner = player, player
 
-        change_cnts += 1
+        if len(changes) > 1:
+            change_cnts += 1
 
 print(change_cnts)
