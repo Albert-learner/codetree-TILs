@@ -24,8 +24,10 @@ for ch_idx, (player, ch_score) in enumerate(changes):
             winner = 'A'
         elif a_score < b_score:
             winner = 'B'
-        else:
+        elif a_score > 0 and a_score == b_score:
             change_cnts += 1
+        elif a_score == 0 and a_score == b_score:
+            continue
 
         if prev_winner != winner:
             change_cnts += 1
