@@ -25,5 +25,8 @@ while sx != tx and sy != ty:
 if (disturb_x, disturb_y) in routes_pos:
     min_dists += 1
 
+if (start_x == target_x and start_x == disturb_x) or (start_y == target_y and start_y == disturb_y):
+    min_dists += 4
+
 min_dists = abs(target_x - start_x) + abs(target_y - start_y) - 1
 print(min_dists)
