@@ -1,28 +1,31 @@
-N = int(input())
-n_lst = list(map(int, input().split()))
+n = int(input())
+ans = 0
 
-odds, evens = 0, 0
-for n in n_lst:
-    if n % 2 != 0:
-        odds += 1
+odd = 0
+even = 0
+
+numbers = list(map(int, input().split()))
+
+for num in numbers:
+    if num % 2 != 0:
+        odd += 1
     else:
-        evens += 1
+        even += 1
 
-answer = 0
-if evens > odds:
-    answer = odds * 2 + 1
-elif evens == odds:
-    answer = evens + odds
+if even > odd:
+    ans = odd * 2 + 1
+elif even == odd:
+    ans = even + odd
 else:
-    answer = evens * 2 
-    diff = odds - evens
+    ans = even * 2
+    size = odd - even
 
-    if diff % 3 == 0:
-        answer += (diff // 3) * 2
+    if size % 3 == 0:
+        ans += (size // 3) * 2
     else:
-        if (diff % 3) % 2 == 0:
-            answer = diff // 3 * 2 + 1
+        if (size % 3) % 2 == 0:
+            ans += size // 3 * 2 + 1
         else:
-            answer += diff // 3 * 2 - 1
+            ans += size // 3 * 2 - 1
 
-print(answer)
+print(ans)
