@@ -1,4 +1,7 @@
 N, M = map(int, input().split())
 people = list(map(int, input().split()))
 
-print(N // (M * 2 + 1))
+if M == 0:
+    print(N - 1)
+else:
+    print(N // (M * 2 + 1))
