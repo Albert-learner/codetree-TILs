@@ -1,17 +1,25 @@
 a_str = input()
+n = len(a_str)
 
-front_idxs, rear_idxs = [], []
-for chr_idx, a_chr in enumerate(a_str):
-    if a_chr == '(':
-        front_idxs.append(chr_idx)
-    else:
-        rear_idxs.append(chr_idx)
+cnts, result = 0, 0
+for i in range(n - 1, 0, -1):
+    if a_str[i] == ')' and a_str[i - 1] == ')':
+        cnts += 1
+    elif a_str[i] == '(' and a_str[i - 1] == '(':
+        result += cnts
 
-answer = 0
-for i in range(len(front_idxs) - 1):
-    if abs(front_idxs[i + 1] - front_idxs[i]) == 1:
-        for j in range(i + 1, len(rear_idxs) - 1):
-            if abs(rear_idxs[j + 1] - rear_idxs[j]) == 1:
-                answer += 1
+print(result)
 
-print(answer)
+# # 모범답안
+# # 변수 선언 및 입력
+# string = input()
+# n = len(string)
+
+# # 모든 쌍을 다 잡아봅니다.
+# cnt = 0
+# for i in range(n - 1):
+#     for j in range(i + 1, n - 1):
+#         if string[i] == '(' and string[i + 1] == '(' and string[j] == ')' and string[j + 1] == ')':
+#             cnt += 1
+            
+# print(cnt)
