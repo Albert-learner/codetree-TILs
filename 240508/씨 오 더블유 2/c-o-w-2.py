@@ -1,8 +1,11 @@
-from collections import Counter
-from functools import reduce
-
 N = int(input())
 n_str = input()
 
-n_str_cntr = Counter(n_str)
-print(reduce(lambda x, y: x * y, n_str_cntr.values()))
+cases = 0
+for i in range(N):
+    for j in range(i + 1, N):
+        for k in range(j + 1, N):
+            if n_str[i] == 'C' and n_str[j] == 'O' and n_str[k] == 'W':
+                cases += 1
+
+print(cases)
