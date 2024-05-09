@@ -5,9 +5,6 @@ codes = [input().split() for _ in range(M)]
 
 itr = N
 for code in codes:
-    if itr > N:
-        continue
-
     if code[0] == 'L':
         if itr != 0:
             itr -= 1
@@ -15,7 +12,7 @@ for code in codes:
         if itr != N:
             itr += 1
     elif code[0] == 'D':
-        if itr > N:
+        if itr > N or itr < -N:
             continue
 
         word_lst.pop(itr)
