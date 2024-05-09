@@ -1,24 +1,21 @@
 N, M = map(int, input().split())
-word = input()
+word = input().strip()
+
 word_lst = list(word)
-codes = [input().split() for _ in range(M)]
+itr = len(word_lst)
 
-itr = N
-for code in codes:
-    if itr in range(N + 1):
-        if code[0] == 'L':
-            if itr != 0:
-                itr -= 1
-        elif code[0] == 'R':
-            if itr != N:
-                itr += 1
-        elif code[0] == 'D':
-            if itr > N:
-                continue
-
-            word_lst.pop(itr)
-        elif code[0] == 'P':
-            word_lst.insert(itr, code[1])
-            itr += 1
+for i in range(M):
+    cmd = input().split()
+    if cmd[0] == 'L':
+        itr = max(0, itr - 1)
+    elif cmd[0] == 'R':
+        itr = min(len(word_lst), itr + 1)
+    elif cmd[0] == 'D':
+        if itr < len(word_lst):
+            del word_lst[itr]
+    elif cmd[0] == 'P':
+        ch = cmd[1]
+        word_lst.insert(itr, ch)
+        itr += 1
 
 print("".join(word_lst))
