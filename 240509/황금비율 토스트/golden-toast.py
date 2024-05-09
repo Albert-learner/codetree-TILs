@@ -13,8 +13,10 @@ for code in codes:
             if itr != N:
                 itr += 1
         elif code[0] == 'D':
-            if itr != 0 or itr != N or itr < 0 or itr > N:
-                word_lst.pop(itr)
+            if itr > N:
+                continue
+
+            word_lst.pop(itr)
         elif code[0] == 'P':
             word_lst.insert(itr, code[1])
             itr += 1
