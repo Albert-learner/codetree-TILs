@@ -16,7 +16,7 @@ def merge_sort(lst):
             merge_lst.append(low_lst[l])
             l += 1
         else:
-            merge_lst.append(high_lst[l])
+            merge_lst.append(high_lst[h])
             h += 1
 
     merge_lst += low_lst[l:]
