@@ -1,4 +1,5 @@
 brackets = input()
+answer = "Yes"
 
 stack = []
 for bracket in brackets:
@@ -6,11 +7,10 @@ for bracket in brackets:
         stack.append(bracket)
     else:
         if len(stack) == 0:
-            print("No")            
+            answer = "No"
             break
-        stack.pop()
+        else:
+            stack.pop()
 
-if len(stack) == 0:
-    print("Yes")
-else:
-    print("No")
+answer = "Yes" if len(stack) == 0 else "No"
+print(answer)
