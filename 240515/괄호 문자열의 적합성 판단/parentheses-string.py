@@ -6,7 +6,6 @@ for bracket in brackets:
         stack.append(bracket)
     else:
         if len(stack) == 0:
-            print("No")
             break
         stack.pop()
 
