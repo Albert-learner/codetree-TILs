@@ -1,16 +1,23 @@
 brackets = input()
-answer = "Yes"
 
-stack = []
-for bracket in brackets:
-    if bracket == '(':
-        stack.append(bracket)
-    else:
-        if len(stack) == 0:
-            answer = "No"
-            break
+def confirm_stack(brkts):
+    answer = True
+
+    stack = []
+    for brkt in brkts:
+        if brkt == '(':
+            stack.append(brkt)
         else:
-            stack.pop()
+            if len(stack) == 0:
+                answer = False
+                return answer
+            else:
+                stack.pop()
 
-answer = "Yes" if len(stack) == 0 else "No"
-print(answer)
+    answer = len(stack) == 0
+    return answer
+
+if confirm_stack(brackets):
+    print("Yes")
+else:
+    print("No")
