@@ -6,10 +6,11 @@ for bracket in brackets:
         stack.append(bracket)
     else:
         if len(stack) == 0:
+            print("No")            
             break
         stack.pop()
 
-if len(stack) != 0:
-    print("No")
-else:
+if len(stack) == 0:
     print("Yes")
+else:
+    print("No")
