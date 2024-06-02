@@ -1,9 +1,9 @@
 N = int(input())
 
 idx, cnts = 1, 0
-while N >= 1:
+while N // idx > 1:
     N //= idx
-    idx += 1
     cnts += 1
+    idx += 1
 
-print(cnts)
+print(cnts + 1)
