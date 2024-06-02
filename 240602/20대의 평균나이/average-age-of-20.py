@@ -5,7 +5,7 @@ while True:
 
     if age < 20 or age >= 30:
         ages /= cnts
-        print("{:.2f}".format(round(ages, 1)))
+        print("{:.2f}".format(round(ages, 2)))
         break
     else:
         ages += age
