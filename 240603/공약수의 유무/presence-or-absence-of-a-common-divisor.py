@@ -15,13 +15,12 @@ for i in range(1, int(2880 ** 0.5) + 1):
             second.append(2880 // i)
 second = sorted(second)
 
-answer = 0
+answer = False
 for n in range(a, b + 1):
     if n in first or n in second:
-        answer = 1
-        break
-    
-if answer != 1:
-    answer = 0
-    
-print(answer)
+        answer = True
+
+if answer == True:
+    print(1)
+else:
+    print(0)
