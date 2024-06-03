@@ -20,7 +20,8 @@ for n in range(a, b + 1):
     if n in first or n in second:
         answer = 1
         break
-    else:
-        answer = 0
-
+    
+if answer != 1:
+    answer = 0
+    
 print(answer)
