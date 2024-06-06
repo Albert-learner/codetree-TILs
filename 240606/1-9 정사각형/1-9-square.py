@@ -1,13 +1,14 @@
 N = int(input())
 
 for i in range(1, N ** 2 + 1):
-    if i % N == 0:
-        if i >= 10:
-            print(i % 10 + 1)
+    if i < 10:
+        if i % N == 0:
+            print(i)
         else:
-            print(i % 10)
+            print(i, end = '')
     else:
-        if i >= 10:
-            print(i % 10 + 1, end = '')
+        q, r = divmod(i, 10)
+        if i % N == 0:
+            print(q + r)
         else:
-            print(i % 10, end = '')
+            print(q + r, end = '')
