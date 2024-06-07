@@ -7,3 +7,5 @@ for num in range(1, 10):
                 print(f"{n} * {num} = {n * num}")
             else:
                 print(f"{n} * {num} = {n * num} /", end = ' ')
+    else:
+        print(f"{a} * {num} = {a * num}")
