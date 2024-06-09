@@ -6,4 +6,5 @@ for n in n_lst:
     if n % 2 == 0:
         evals.append(n)
 
-print(*evals[::-1])
+for rn in evals[::-1]:
+    print(rn, end = ' ')
