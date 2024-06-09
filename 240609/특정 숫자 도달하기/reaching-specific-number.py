@@ -9,6 +9,6 @@ for n in n_lst:
         break
 
 if confirm == True:
-    print(f"{sum(n_lst[:last_idx])} {sum(n_lst[:last_idx]) / last_idx}")
+    print("{} {:.1f}".format(sum(n_lst[:last_idx]), round(sum(n_lst[:last_idx]) / last_idx, 1)))
 else:
-    print(f"{sum(n_lst)} {sum(n_lst) / 10}")
+    print("{} {:.1f}".format(sum(n_lst), round(sum(n_lst) / 10, 1)))
