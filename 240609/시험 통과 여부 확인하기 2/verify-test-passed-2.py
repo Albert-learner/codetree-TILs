@@ -10,4 +10,5 @@ for student in students:
         pass_students += 1
     else:
         print("fail")
-        print(pass_students)
+        
+print(pass_students)
