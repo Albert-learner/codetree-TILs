@@ -7,7 +7,7 @@ for _ in range(Q):
     if len(question) == 2:
         question[1] = int(question[1])
     else:
-        question[1], question[2] = int(question[1]) - 1, int(question[2]) - 1
+        question[1], question[2] = int(question[1]), int(question[2])
     questions.append(question)
 
 for question in questions:
@@ -15,11 +15,12 @@ for question in questions:
         print(n_lst[question[1] - 1])
     elif question[0] == 2:
         first_idx = 0
-        for idx, n in enumerate(n_lst):
+        for idx, n in enumerate(n_lst, 1):
             if n == question[1]:
-                first_idx = idx + 1
+                first_idx = idx
                 break
         print(first_idx)
     else:
-        for i in range(question[1], question[2] + 1):
+        for i in range(question[1] - 1, question[2]):
             print(n_lst[i], end = ' ')
+        print()
