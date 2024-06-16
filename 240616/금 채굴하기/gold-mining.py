@@ -1,7 +1,8 @@
 from collections import deque
 
 def get_max_gold(start_y, start_x, n, gold_price, board):
-    max_gold = 0
+    global answer
+
     visited = [[False] * n for _ in range(n)]
     dy = [-1, 0, 1, 0]
     dx = [0, 1, 0, -1]
@@ -36,20 +37,19 @@ def get_max_gold(start_y, start_x, n, gold_price, board):
 
         cost = k * k + (k + 1) * (k + 1)
         if cost <= total_gold_acquired * gold_price:
-            max_gold = max(max_gold, total_gold_acquired)
-
-    return max_gold
+            answer = max(answer, total_gold_acquired)
 
 def main():
+    global answer
+    answer = 0
     n, gold_price = map(int, input().split())
     board = [list(map(int, input().split())) for _ in range(n)]
-    max_gold = 0
 
     for y in range(n):
         for x in range(n):
-            max_gold = max(max_gold, get_max_gold(y, x, n, gold_price, board))
+            get_max_gold(y, x, n, gold_price, board)
 
-    print(max_gold)
+    print(answer)
 
 if __name__ == "__main__":
     main()
