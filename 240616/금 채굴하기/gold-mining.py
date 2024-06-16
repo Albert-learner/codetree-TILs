@@ -35,7 +35,7 @@ def get_max_golds(sy, sx, n, m, board):
                 visited[my][mx] = True
                 BFS.append((my, mx, side + 1))
 
-        cost = k ** 2 + (k + 1) ** 2
+        cost = k * k + (k + 1) * (k + 1)
         if cost <= total_golds * m:
             max_golds = max(max_golds, total_golds)
 
