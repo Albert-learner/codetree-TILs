@@ -4,7 +4,7 @@ board = [list(map(int, input().split())) for _ in range(N)]
 def check_positive(x1, y1, x2, y2):
     for x in range(x1, x2 + 1):
         for y in range(y1, y2 + 1):
-            if board[x][y] <= 0:
+            if board[x][y] < 0:
                 return False
 
     return True
