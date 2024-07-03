@@ -1,48 +1,56 @@
-N, M, T = map(int, input().split())
-board = [list(map(int, input().split())) for _ in range(N)]
-marble_poses = [map(lambda x: int(x) - 1, input().split()) for _ in range(M)]
+def in_range(x, y, n):
+    return 0 <= x < n and 0 <= y < n
 
-counts = [[0] * N for _ in range(N)]
-for x, y in marble_poses:
-    counts[x][y] = 1
+def next_pos(x, y, n, arr):
+    dxs = [-1, 1, 0, 0]
+    dys = [0, 0, -1, 1]
 
-def in_range(x, y):
-    return 0 <= x < N and 0 <= y < N
-
-def next_pos(x, y):
     max_num = 0
-    max_pos = (-1, -1)
+    max_pos = (x, y)
 
-    for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-        mx, my = x + dx, y + dy
-        if in_range(mx, my) and board[mx][my] > max_num:
-            max_num = board[mx][my]
-            max_pos = (mx, my)
+    for dx, dy in zip(dxs, dys):
+        next_x, next_y = x + dx, y + dy
+        if in_range(next_x, next_y, n) and arr[next_x][next_y] > max_num:
+            max_num = arr[next_x][next_y]
+            max_pos = (next_x, next_y)
 
     return max_pos
 
-def simulate(cnts):
-    tmp_counts = [[0] * N for _ in range(N)]
-    for i in range(N):
-        for j in range(N):
-            if cnts[i][j] == 1:
-                x, y = next_pos(i, j)
-                tmp_counts[x][y] += 1
+def simulate(n, count, arr):
+    tmp_count = [[0] * n for _ in range(n)]
+    for i in range(n):
+        for j in range(n):
+            if count[i][j] == 1:
+                x, y = next_pos(i, j, n, arr)
+                tmp_count[x][y] += 1
+    return tmp_count
 
-    return tmp_counts
+def boom(n, count):
+    for i in range(n):
+        for j in range(n):
+            if count[i][j] >= 2:
+                count[i][j] = 0
+    return count
 
-def boom(cnts):
-    for i in range(N):
-        for j in range(N):
-            if cnts[i][j] >= 2:
-                cnts[i][j] = 0
+def main():
+    n, m, t = map(int, input().split())
 
-    return cnts
+    arr = [
+        list(map(int, input().split()))
+        for _ in range(n)
+    ]
 
-for _ in range(T):
-    cnts = simulate(counts)
-    cnts = boom(cnts)
+    count = [[0] * n for _ in range(n)]
+    for _ in range(m):
+        x, y = map(int, input().split())
+        count[x - 1][y - 1] = 1
 
-totals = sum(sum(row) for row in cnts)
+    for _ in range(t):
+        count = simulate(n, count, arr)
+        count = boom(n, count)
 
-print(totals)
+    total_sum = sum(sum(row) for row in count)
+    print(total_sum)
+
+if __name__ == "__main__":
+    main()
