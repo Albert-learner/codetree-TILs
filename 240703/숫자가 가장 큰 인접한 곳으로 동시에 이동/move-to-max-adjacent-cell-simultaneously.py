@@ -19,9 +19,7 @@ def next_pos(x, y):
             max_num = board[mx][my]
             max_pos = (mx, my)
 
-    x, y = max_pos
-
-    return x, y
+    return max_pos
 
 def simulate(cnts):
     tmp_counts = [[0] * N for _ in range(N)]
@@ -45,9 +43,6 @@ for _ in range(T):
     cnts = simulate(counts)
     cnts = boom(cnts)
 
-totals = 0
-for i in range(N):
-    for j in range(N):
-        totals += cnts[i][j]
+totals = sum(sum(row) for row in cnts)
 
 print(totals)
