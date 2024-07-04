@@ -1,48 +1,54 @@
-import sys
-
-# 입력
-n, t = map(int, input().split())
-arr = [list(map(int, input().split())) for _ in range(n)]
-
-# 선언
-dxs = [-1, -1, 0, 1, 1, 1, 0, -1]
-dys = [0, 1, 1, 1, 0, -1, -1, -1]
-
-# 격자 안에 있는 범위 탐색
-def is_in_range(x, y) :
+def in_range(x, y, n):
     return 0 <= x < n and 0 <= y < n
 
-# 8방향 중 최대값 찾기 
-def Search_dirt(row, col) :
-    max_num = -sys.maxsize
-    for dx, dy in zip(dxs, dys) :
-        next_x, next_y = row + dx, col + dy
+def swap(arr, x1, y1, x2, y2):
+    arr[x1][y1], arr[x2][y2] = arr[x2][y2], arr[x1][y1]
 
-        if is_in_range(next_x, next_y) :
-            if arr[next_x][next_y] > max_num :
-                max_num = arr[next_x][next_y]
-    return max_num
+# 주위 8방향 중 가장 큰 값과 교환
+def select_max(arr, x, y, n):
+    dx = [-1, -1, -1, 0, 1, 1, 1, 0]
+    dy = [-1, 0, 1, 1, 1, 0, -1, -1]
 
-# 각 값들의 위치(r, c) 찾기 
-def Search_point(num) :
-    for row in range(n) :
-        for col in range(n) :
-            if arr[row][col] == num :
-                return row, col
+    max_x, max_y = -1, -1
 
-# 교체하기
-def Exchange(max_num, num, row, col) :
-    max_row, max_col = Search_point(max_num)
+    for dir in range(8):
+        nx, ny = x + dx[dir], y + dy[dir]
+        if not in_range(nx, ny, n):
+            continue
 
-    temp = arr[max_row][max_col]
-    arr[max_row][max_col] = arr[row][col]
-    arr[row][col] = temp
-    return arr
-for turn in range(t) :
-    for num in range(1, (n * n) + 1) :
-        row, col = Search_point(num) # 숫자의 위치찾기
-        max_num = Search_dirt(row, col) # 8방향 중 최대값 찾기
-        arr = Exchange(max_num, num, row, col)
+        if max_x == -1:
+            max_x, max_y = nx, ny
+
+        if arr[max_x][max_y] < arr[nx][ny]:
+            max_x, max_y = nx, ny
+
+    if max_x != -1:  # max_x와 max_y가 업데이트 된 경우에만 교환
+        swap(arr, x, y, max_x, max_y)
+
+def progress(arr, n, m):
+    for turn in range(m):
+        num = 1
+        # 1이 적힌 칸부터 n*n이 적힌 칸까지 순차적 swap
+        while num <= n * n:
+            is_done = False
+            for i in range(n):
+                for j in range(n):
+                    if arr[i][j] == num:
+                        select_max(arr, i, j, n)
+                        is_done = True
+                        break
+                if is_done:
+                    break
+            num += 1
+
+def main():
+    n, m = map(int, input().split())
+    arr = [list(map(int, input().split())) for _ in range(n)]
+
+    progress(arr, n, m)
 
     for row in arr:
-        print(*row)
+        print(" ".join(map(str, row)))
+
+if __name__ == "__main__":
+    main()
