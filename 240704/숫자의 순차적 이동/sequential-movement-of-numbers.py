@@ -32,7 +32,7 @@ def change_board(max_cost, num, row, col):
     return board
 
 for _ in range(M):
-    for n in range(1, N ** 2 + 1):
+    for n in range(1, N * N + 1):
         r, c = find_pos(n)
         max_cst = find_max(r, c)
         board = change_board(max_cst, n, r, c)
