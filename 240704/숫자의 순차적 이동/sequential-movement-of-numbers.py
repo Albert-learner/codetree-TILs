@@ -1,3 +1,5 @@
+import sys
+
 N, M = map(int, input().split())
 board = [list(map(int, input().split())) for _ in range(N)]
 
@@ -11,7 +13,7 @@ def find_pos(num):
                 return row, col
 
 def find_max(row, col):
-    max_num = 0
+    max_num = -sys.maxsize
     for dx, dy in [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]:
         mx, my = row + dx, col + dy
 
