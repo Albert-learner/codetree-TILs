@@ -1,43 +1,51 @@
 import sys
 
-N, M = map(int, input().split())
+# 입력
+N, T = map(int, input().split())
 board = [list(map(int, input().split())) for _ in range(N)]
 
-def in_range(x, y):
+# 선언
+dxs = [-1, -1, 0, 1, 1, 1, 0, -1]
+dys = [0, 1, 1, 1, 0, -1, -1, -1]
+
+# 격자 안에 있는 범위 탐색
+def is_in_range(x, y) :
     return 0 <= x < N and 0 <= y < N
 
-def find_pos(num):
-    for row in range(N):
-        for col in range(N):
-            if board[row][col] == num:
-                return row, col
+# 교체하기
+def Exchange(max_num, num) :
+    max_row, max_col = Search_point(max_num)
+    row, col = Search_point(num)
 
-def find_max(row, col):
-    max_num = -sys.maxsize
-    for dx, dy in [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]:
-        mx, my = row + dx, col + dy
-
-        if in_range(mx, my):
-            if board[mx][my] > max_num:
-                max_num = board[mx][my]
-
-    return max_num
-
-def change_board(max_cost, num, row, col):
-    max_row, max_col = find_pos(max_cost)
-
-    tmp = board[max_row][max_col]
+    temp = board[max_row][max_col]
     board[max_row][max_col] = board[row][col]
-    board[row][col] = tmp
-    # board[row][col], board[max_row][max_col] = board[max_row][max_col], board[row][col]
-
+    board[row][col] = temp
     return board
 
-for _ in range(M):
-    for n in range(1, N * N + 1):
-        r, c = find_pos(n)
-        max_cst = find_max(r, c)
-        board = change_board(max_cst, n, r, c)
+# 8방향 중 최대값 찾기 
+def Search_dirt(row, col) :
+    max_num = -sys.maxsize
+    for dx, dy in zip(dxs, dys) :
+        next_x, next_y = row + dx, col + dy
+
+        if is_in_range(next_x, next_y) :
+            if board[next_x][next_y] > max_num :
+                max_num = board[next_x][next_y]
+    return max_num
+
+# 각 값들의 위치(r, c) 찾기 
+def Search_point(num) :
+    for row in range(N) :
+        for col in range(N) :
+            if board[row][col] == num :
+                return row, col
+
+for turn in range(T) :
+    # 1부터 n * n까지의 위치 찾기
+    for num in range(1, (N ** 2) + 1) :
+        row, col = Search_point(num) # 숫자의 위치찾기
+        max_num = Search_dirt(row, col) # 8방향 중 최대값 찾기
+        arr = Exchange(max_num, num)
 
     for row in board:
         print(*row)
