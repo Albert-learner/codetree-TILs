@@ -24,10 +24,10 @@ def find_max(row, col):
 def change_board(max_cost, num, row, col):
     max_row, max_col = find_pos(max_cost)
 
-    # tmp = board[max_row][max_col]
-    # board[max_row][max_col] = board[row][col]
-    # board[row][col] = tmp
-    board[row][col], board[max_row][max_col] = board[max_row][max_col], board[row][col]
+    tmp = board[max_row][max_col]
+    board[max_row][max_col] = board[row][col]
+    board[row][col] = tmp
+    # board[row][col], board[max_row][max_col] = board[max_row][max_col], board[row][col]
 
     return board
 
