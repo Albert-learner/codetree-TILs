@@ -20,7 +20,7 @@ def run_length_encoding(input_str):
 
     return result
 
-min_length = len(a_str)
+min_length = float("INF")
 for cnts in range(1, len(a_str)):
     a_str_que = deque(a_str)
     a_str_que.rotate(cnts)
