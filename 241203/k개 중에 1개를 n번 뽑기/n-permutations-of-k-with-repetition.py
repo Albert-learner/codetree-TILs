@@ -7,15 +7,16 @@ def print_answer():
         print(elem, end = " ")
     print()
 
-def choose(cur_num):
-    if cur_num == K + 1:
+def choose_num(curr_num):
+    if curr_num == N + 1:
         print_answer()
         return
-    
-    for i in range(1, N + 1):
+
+    for i in range(1, K + 1):
         answer.append(i)
-        choose(cur_num + 1)
+        choose_num(curr_num + 1)
         answer.pop()
+
     return
 
-choose(1)
+choose_num(1)
