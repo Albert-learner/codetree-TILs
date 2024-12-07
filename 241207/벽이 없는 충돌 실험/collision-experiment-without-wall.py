@@ -1,18 +1,5 @@
 import sys
 from collections import defaultdict
-from heapq import heappop, heappush
-
-
-class Coordinate:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def __eq__(self, other):
-        return isinstance(other, Coordinate) and self.x == other.x and self.y == other.y
-
-    def __hash__(self):
-        return hash((self.x, self.y))
 
 
 class Gem:
@@ -28,34 +15,27 @@ def init_mapper():
     return {'L': 0, 'D': 1, 'U': 2, 'R': 3}
 
 
-def simulate(gems, time, last_crash_time, dx, dy):
-    map_dict = defaultdict(list)
-    
-    # Move gems and group by new positions
+def simulate(gems, dx, dy):
+    position_map = defaultdict(list)
+    to_remove = set()
+
+    # Move gems and group by positions
     for gem in gems:
         gem.x += dx[gem.direction]
         gem.y += dy[gem.direction]
-        coordinate = Coordinate(gem.x, gem.y)
-        map_dict[coordinate].append(gem)
-    
+        coordinate = (gem.x, gem.y)
+        position_map[coordinate].append(gem)
+
     # Process collisions
-    to_remove = []
-    for coordinate, gem_list in map_dict.items():
+    for coordinate, gem_list in position_map.items():
         if len(gem_list) > 1:
-            last_crash_time[0] = time
-            # Create a max-heap to process gems
-            pq = []
-            for gem in gem_list:
-                heappush(pq, (-gem.weight, -gem.number, gem))
-            
-            heappop(pq)  # Keep the most significant gem
-            while pq:
-                _, _, gem_to_remove = heappop(pq)
-                to_remove.append(gem_to_remove)
-    
+            # Mark all except the heaviest gem for removal
+            gem_list.sort(key=lambda g: (-g.weight, -g.number))
+            to_remove.update(gem_list[1:])
+
     # Remove collided gems
     gems = [gem for gem in gems if gem not in to_remove]
-    return gems
+    return gems, bool(to_remove)  # Return whether any collision occurred
 
 
 def main():
@@ -64,8 +44,8 @@ def main():
     T = int(data[0])
     results = []
     mapper = init_mapper()
-    dx = [-0.5, 0.0, 0.0, 0.5]
-    dy = [0.0, -0.5, 0.5, 0.0]
+    dx = [-1, 0, 0, 1]  # Adjusted to integer-based movement
+    dy = [0, -1, 1, 0]
 
     line_index = 1
     for _ in range(T):
@@ -74,20 +54,22 @@ def main():
         gems = []
         for num in range(1, N + 1):
             x, y, w, d = data[line_index].split()
-            x = float(x)
-            y = float(y)
+            x = int(float(x) * 2)  # Convert to integer by doubling
+            y = int(float(y) * 2)  # Convert to integer by doubling
             w = int(w)
             d = mapper[d]
             gems.append(Gem(x, y, num, d, w))
             line_index += 1
         
         time = 0
-        last_crash_time = [-1]  # Use list to emulate mutable integer
-        while time < 4000:
+        last_crash_time = -1
+        while time < 4000 and gems:
             time += 1
-            gems = simulate(gems, time, last_crash_time, dx, dy)
+            gems, collision_occurred = simulate(gems, dx, dy)
+            if collision_occurred:
+                last_crash_time = time
         
-        results.append(last_crash_time[0])
+        results.append(last_crash_time)
     
     sys.stdout.write("\n".join(map(str, results)) + "\n")
 
