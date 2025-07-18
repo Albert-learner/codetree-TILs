@@ -1,33 +1,34 @@
+from functools import lru_cache
+
 def calc(pieces, m):
     return sum(1 for p in pieces if p >= m)
 
-def find_max(cnt, n, m, k, nums, pieces):
-    # 재귀 진입 시 항상 정답 갱신
-    current_score = calc(pieces, m)
-    
-    if cnt == n:
-        return current_score
+def solve(n, m, k, nums):
+    @lru_cache(maxsize=None)
+    def backtrack(cnt, *pieces):  # pieces: unpacked as tuple
+        current_score = sum(1 for p in pieces if p >= m)
+        if cnt == n:
+            return current_score
 
-    max_score = current_score
-    has_moved = False
+        max_score = current_score
+        for i in range(k):
+            if pieces[i] >= m:
+                continue
 
-    for i in range(k):
-        if pieces[i] >= m:
-            continue
+            # 리스트로 복사하여 이동 시뮬레이션
+            next_pieces = list(pieces)
+            next_pieces[i] += nums[cnt]
+            score = backtrack(cnt + 1, *next_pieces)
+            max_score = max(max_score, score)
 
-        has_moved = True
-        pieces[i] += nums[cnt]
-        score = find_max(cnt + 1, n, m, k, nums, pieces)
-        max_score = max(max_score, score)
-        pieces[i] -= nums[cnt]
+        return max_score
 
-    return max_score
+    # 초기 상태: 모든 말은 위치 1
+    return backtrack(0, *([1] * k))
 
-# 입력 처리
+# 입력
 n, m, k = map(int, input().split())
 nums = list(map(int, input().split()))
-pieces = [1] * k
 
 # 실행
-answer = find_max(0, n, m, k, nums, pieces)
-print(answer)
+print(solve(n, m, k, nums))
