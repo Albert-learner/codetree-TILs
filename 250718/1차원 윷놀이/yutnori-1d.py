@@ -1,24 +1,33 @@
-def backtracking(curr_idx, horse_status, command, n, m, k):
-    if curr_idx == n:
-        return sum(1 for val in horse_status if val >= m)
+def calc(pieces, m):
+    return sum(1 for p in pieces if p >= m)
 
-    max_score = 0
+def find_max(cnt, n, m, k, nums, pieces):
+    # 재귀 진입 시 항상 정답 갱신
+    current_score = calc(pieces, m)
+    
+    if cnt == n:
+        return current_score
+
+    max_score = current_score
+    has_moved = False
+
     for i in range(k):
-        if horse_status[i] >= m:
+        if pieces[i] >= m:
             continue
 
-        # 말 이동
-        horse_status[i] += command[curr_idx]
-        score = backtracking(curr_idx + 1, horse_status, command, n, m, k)
+        has_moved = True
+        pieces[i] += nums[cnt]
+        score = find_max(cnt + 1, n, m, k, nums, pieces)
         max_score = max(max_score, score)
-        horse_status[i] -= command[curr_idx]  # 백트래킹
+        pieces[i] -= nums[cnt]
 
     return max_score
 
-# 입력 및 실행
+# 입력 처리
 n, m, k = map(int, input().split())
-command = list(map(int, input().split()))
-horse_status = [1] * k
+nums = list(map(int, input().split()))
+pieces = [1] * k
 
-result = backtracking(0, horse_status, command, n, m, k)
-print(result)
+# 실행
+answer = find_max(0, n, m, k, nums, pieces)
+print(answer)
