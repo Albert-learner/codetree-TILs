@@ -11,4 +11,4 @@ for num in A:
         if dp[j - num] != INT_MAX:
             dp[j] = min(dp[j], dp[j - num] + 1)
 
-print("Yes" if INT_MAX not in dp else "No")
+print("Yes" if dp[m] else "No")
