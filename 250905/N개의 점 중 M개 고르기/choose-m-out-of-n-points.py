@@ -4,8 +4,30 @@ points = [tuple(map(int, input().split())) for _ in range(n)]
 # Please write your code here.
 from itertools import combinations
 
-point_combs = list(combinations(points, 2))
-point_combs.sort(key=lambda x: (x[0][0] - x[1][0]) ** 2 + (x[0][1] - x[1][1]) ** 2)
+dist2 = [[0] * n for _ in range(n)]
+for i in range(n):
+    x1, y1 = points[i]
+    for j in range(i + 1, n):
+        x2, y2 = points[j]
+        d2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
+        dist2[i][j] = dist2[j][i] = d2
 
-dists = (point_combs[0][0][0] - point_combs[0][1][0]) ** 2 + (point_combs[0][0][1] - point_combs[0][1][1]) ** 2
-print(dists)
+best = float("inf")
+for comb in combinations(range(n), m):
+    cur_max = 0
+    for a_i in range(m):
+        ai = comb[a_i]
+        for b_i in range(a_i+1, m):
+            bi = comb[b_i]
+            d2 = dist2[ai][bi]
+            if d2 > cur_max:
+                cur_max = d2
+                if cur_max >= best:
+                    break
+        else:
+            continue
+        break
+    if cur_max < best:
+        best = cur_max
+
+print(best)
