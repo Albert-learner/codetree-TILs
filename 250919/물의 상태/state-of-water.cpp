@@ -8,7 +8,7 @@ int main() {
 
     if(N < 0)
         cout << "ice";
-    else if(0 <= N < 100)
+    else if(0 <= N <= 100)
         cout << "water";
     else
         cout << "vapor";
