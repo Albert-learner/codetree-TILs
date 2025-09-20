@@ -9,7 +9,7 @@ int main()
 
     if(N >= 3000)
         cout << "book";
-    else if(1000 <= N < 3000)
+    else if(1000 <= N and N < 3000)
         cout << "mask";
     else
         cout << "no";
