@@ -8,8 +8,8 @@ int main()
     cin >> a;
 
     if(a % 13 == 0 || a % 19 == 0)
-        cout << True;
+        cout << true;
     else
-        cout << False;
+        cout << false;
     return 0;
 }
