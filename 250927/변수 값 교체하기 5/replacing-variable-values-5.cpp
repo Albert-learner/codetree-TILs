@@ -9,5 +9,6 @@ int main()
     a = b;
 
     cout << a << endl;
+    cout << b << endl;
     return 0;
 }
