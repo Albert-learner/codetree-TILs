@@ -2,14 +2,14 @@ N, M = map(int, input().split())
 nums = list(map(int, input().split()))
 
 OFFSET = 20
-RANGE = 2 * OFFSET + 1  # -20..20 -> 41칸
+RANGE = 2 * OFFSET + 1  
 
 dp = [0] * RANGE
 
 first = nums[0]
 if -20 <= first <= 20:
     dp[first + OFFSET] += 1
-if first != 0 and -20 <= -first <= 20:
+if -20 <= -first <= 20:
     dp[-first + OFFSET] += 1
 
 for x in nums[1:]:
