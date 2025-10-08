@@ -9,7 +9,7 @@ int main()
     string result;
     cin >> score;
 
-    result = (score == 100) ? "pass" : "Failure";
+    result = (score == 100) ? "pass" : "failure";
     cout << result;
     return 0;
 }
