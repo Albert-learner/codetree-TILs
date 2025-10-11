@@ -8,9 +8,9 @@ int main()
     cin >> a >> b;
 
     if(a < b)
-        cout << 1 << endl;
+        cout << 1 << ' ';
     else
-        cout << 0 << endl;
+        cout << 0 << ' ';
 
     if(a == b)
         cout << 1;
