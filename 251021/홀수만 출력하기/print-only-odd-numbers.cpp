@@ -17,9 +17,9 @@ int main()
 
     for(int i = 0; i < n; i++)
     {
-        if(n_lst[i] % 3 == 0)
+        if(n_lst[i] % 2 == 1 && n_lst[i] % 3 == 0)
             cout << n_lst[i] << endl;
     }
-    
+
     return 0;
 }
