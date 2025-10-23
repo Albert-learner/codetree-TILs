@@ -19,7 +19,7 @@ int main()
         }
     }
 
-    fs_avg = round(10 * fs_sum / fs_cnts) / 10;
+    fs_avg = fs_sum / fs_cnts;
     cout << fixed;
     cout << fs_sum << ' ' << setprecision(1) << fs_avg;
     return 0;
