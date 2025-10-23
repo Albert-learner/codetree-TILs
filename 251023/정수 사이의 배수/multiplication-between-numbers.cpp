@@ -7,7 +7,7 @@ int main()
 {
     // Please write your code here.
     int a, b, fs_sum = 0, fs_cnts = 0;
-    float fs_avg = 0.0;
+    double fs_avg = 0.0;
     cin >> a >> b;
 
     for(int i = a; i <= b; i++)
