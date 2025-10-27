@@ -2,13 +2,12 @@ n = int(input())
 arr = list(map(int, input().split()))
 
 # Please write your code here.
-nums_set_lst = sorted(list(set(arr)))
-nums_pos = {}
-for num in nums_set_lst:
-    if num in arr:
-        nums_pos[num] = arr.index(num)
+first_pos = {}
+for i, x in enumerate(arr, 1):
+    if x not in first_pos:
+        first_pos[x] = i
 
-for num, num_pos in list(nums_pos.items()):
-    print(num, num_pos + 1)
-
-
+out_lines = []
+for x in sorted(first_pos.keys()):
+    out_lines.append(f"{x} {first_pos[x]}")
+print("\n".join(out_lines))
