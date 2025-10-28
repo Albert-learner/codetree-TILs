@@ -1,28 +1,26 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
 int main() 
 {
     // Please write your code here.
-    int cst;
-    bool check[5];
+    vector<int> nums(5);
     for(int i = 0; i < 5; i++)
     {
-        cin >> cst;
-        if(cst % 3 == 0)
-            check[i] = true;
-        else
-            check[i] = false;
+        cin >> nums[i];
     }
 
-    for(int i = 0; i < 5; i++)
+    bool allDivisibleBy3 = true;
+    for(int n: nums)
     {
-        if(check[i] == false)
+        if(n % 3 != 0)
         {
-            cout << 0;
+            allDivisibleBy3 = false;
             break;
         }
     }
-    cout << 1;
+
+    cout << (allDivisibleBy3 ? 1 : 0);
     return 0;
 }
