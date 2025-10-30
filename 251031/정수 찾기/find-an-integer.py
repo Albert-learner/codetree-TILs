@@ -8,5 +8,5 @@ b = list(map(int, input().split()))
 a_set = set(a)
 b_set = set(b)
 
-for num in b_set:
+for num in b:
     print(1 if num in a_set else 0)
