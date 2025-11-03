@@ -7,23 +7,23 @@ for _ in range(T):
     ns = [int(op[1]) for op in operations]
 
     # Please write your code here.
-    queue = []
+    from sortedcontainers import SortedSet
+
+    sort_set = SortedSet()
     for cmd, n in zip(commands, ns):
         if cmd == "I":
-            queue.append(n)
+            sort_set.add(n)
         elif cmd == "D":
             if n == 1:
-                if len(queue) != 0:
-                    max_cst = max(queue)
-                    queue.remove(max_cst)
+                if len(sort_set) != 0:
+                    sort_set.remove(sort_set[-1])
             elif n == -1:
-                if len(queue) != 0:
-                    min_cst = min(queue)
-                    queue.remove(min_cst)
+                if len(sort_set) != 0:
+                    sort_set.remove(sort_set[0])
                 else:
                     print("EMPTY")
 
-    if len(queue) != 0:
-        print(max(queue), min(queue))
+    if len(sort_set) != 0:
+        print(sort_set[-1], sort_set[0])
     else:
         print("EMPTY")
