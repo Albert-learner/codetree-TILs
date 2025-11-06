@@ -1,30 +1,25 @@
-from sortedcontainers import SortedList
-
 n = int(input())
 queries = list(map(int, input().split()))
 
-points = SortedList([0])   
-gaps = SortedList()        
+# Please write your code here.
+from sortedcontainers import SortedList
+
+points = SortedList([0])      
+gaps = SortedList()           
 for x in queries:
-    idx = points.bisect_left(x)
+    i = points.bisect_left(x)
 
-    left_exists = (idx > 0)
-    right_exists = (idx < len(points))
+    if i > 0:
+        left = points[i-1]
+        gaps.add(x - left)
+    if i < len(points):
+        right = points[i]
+        gaps.add(right - x)
 
-    if left_exists and right_exists:
-        p = points[idx - 1]
-        s = points[idx]
 
-        gaps.remove(s - p)       
-        gaps.add(x - p)
-        gaps.add(s - x)
-    elif left_exists:
-        p = points[idx - 1]
-        gaps.add(x - p)
-    elif right_exists:
-        s = points[idx]
-        gaps.add(s - x)
+    if 0 < i < len(points):
+        gaps.remove(right - left) 
 
     points.add(x)
 
-    print(gaps[0] if gaps else 0)
+    print(gaps[0])
