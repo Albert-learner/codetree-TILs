@@ -1,17 +1,39 @@
-import bisect
+from sortedcontainers import SortedSet
 
+# 변수 선언 및 입력:
 n = int(input())
-matters = []
-for i in range(n):
-    p, l = map(int, input().split())
-    bisect.insort(matters, (l, p))
+problems = SortedSet()
+for _ in range(n):
+    p, l = tuple(map(int, input().split()))
+
+    # 주어진 문제를 treeset에 넣어줍니다.
+    problems.add((l, p))
+
 m = int(input())
-for i in range(m):
-    function = list(map(str, input().split()))
-    if function[0] == "ad":  
-        bisect.insort(matters, (int(function[2]), int(function[1])))
-    elif function[0] == "sv": 
-        matters.remove((int(function[2]), int(function[1])))
-    else:  
-        x = int(function[1])
-        print(matters[0][1]) if x == -1 else print(matters[-1][1])
+# m개의 명령을 수행합니다.
+for _ in range(m):
+    command = input()
+
+    if command.startswith("ad"):
+        _, p, l = command.split()
+        p, l = int(p), int(l)
+
+        # 문제를 추가합니다.
+        problems.add((l, p))
+    elif command.startswith("sv"):
+        _, p, l = command.split()
+        p, l = int(p), int(l)
+
+        # 문제를 제거힙니다.
+        problems.remove((l, p))
+    else:
+        x = int(command.split()[1])
+
+        # x가 1이면 난이도가 가장 높은 문제의 번호를 출력합니다.
+        if x == 1:
+            _, p = problems[-1]
+            print(p)
+        # x가 -1이면 난이도가 가장 낮은 문제의 번호를 출력합니다.
+        else:
+            _, p = problems[0]
+            print(p)
