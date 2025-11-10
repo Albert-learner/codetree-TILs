@@ -2,61 +2,31 @@ n, m = map(int, input().split())
 nums = list(map(int, input().split()))
 
 # Please write your code here.
-start_map = {}  
-end_map = {}  
+from sortedcontainers import SortedSet
 
-def add_interval(s, e):
-    start_map[s] = e
-    end_map[e] = s
+s_num = SortedSet()
+s_len = SortedSet()
 
-def remove_interval(s, e):
-    start_map.pop(s, None)
-    end_map.pop(e, None)
+s_num.add(-1)
+s_num.add(n + 1)
 
-removed_sorted = sorted(nums)
-prev = -1
-max_len = 0
+s_len.add((-(n + 1), -1, n + 1))
 
-first = 0
-for r in removed_sorted:
-    if first <= r - 1:
-        add_interval(first, r - 1)
-        max_len = max(max_len, r - 1 - first + 1)
-    first = r + 1
-if first <= n:
-    add_interval(first, n)
-    max_len = max(max_len, n - first + 1)
+for num in nums:
+    s_num.add(num)
 
-rev_ans = [max_len]
+    z = s_num[s_num.bisect_right(num)]
+    x = s_num[s_num.bisect_left(num) - 1]
 
-for x in reversed(nums):
-    left_start = end_map.get(x - 1, None)
-    right_end = start_map.get(x + 1, None)
+    s_len.remove((
+        -(z - x - 1), x, z
+    ))
+    s_len.add((
+        -(num - x - 1), x, num
+    ))
+    s_len.add((
+        -(z - num - 1), num, z
+    ))
 
-    if left_start is None and right_end is None:
-        add_interval(x, x)
-        new_len = 1
-    elif left_start is not None and right_end is None:
-        left_end = x - 1
-        remove_interval(left_start, left_end)
-        add_interval(left_start, x)
-        new_len = x - left_start + 1
-    elif left_start is None and right_end is not None:
-        right_start = x + 1
-        remove_interval(right_start, right_end)
-        add_interval(x, right_end)
-        new_len = right_end - x + 1
-    else:
-        left_end = x - 1
-        right_start = x + 1
-        remove_interval(left_start, left_end)
-        remove_interval(right_start, right_end)
-        add_interval(left_start, right_end)
-        new_len = right_end - left_start + 1
-
-    if new_len > max_len:
-        max_len = new_len
-    rev_ans.append(max_len)
-
-for i in range(1, m + 1):
-    print(rev_ans[m - i])
+    best_length, _, _ = s_len[0]
+    print(-best_length)
