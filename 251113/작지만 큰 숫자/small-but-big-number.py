@@ -3,19 +3,17 @@ sequence = list(map(int, input().split()))
 queries = list(map(int, input().split()))
 
 # Please write your code here.
-from sortedcontainers import SortedSet
+from sortedcontainers import SortedList
 
-sset = SortedSet(sequence)
+slst = SortedList(sequence)
 for query in queries:
-    ridx = sset.bisect_left(query)
+    ridx = slst.bisect_right(query) - 1
 
-    if ridx == 0:
+    if ridx < 0:
         print(-1)
-        continue
-        
-    if sset[ridx] > query:
-        ridx -= 1
-    print(sset[ridx])
-    sset.remove(sset[ridx])
+    else:
+        val = slst[ridx]
+        print(val)
+        slst.pop(ridx)
     
     
