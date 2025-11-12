@@ -1,26 +1,37 @@
 #include <iostream>
 #include <vector>
-#include <iomanip>
+#include <iomanip>  
 using namespace std;
 
 int main() 
 {
-    // Please write your code here.
-    int e_idxs = 0, t_idxs = 0, threes = 0;
-    vector<int> nums(10);
-    for(int i = 0; i < 10; i++)
-    {
-        cin >> nums[i];
-        if(i % 2 == 1)
-            e_idxs += nums[i];
-        else if((i + 1) % 3 == 0)
-        {
-            t_idxs += nums[i];
-            threes += 1;
-        } 
+    vector<int> n_lst;
+    int x;
+    while (cin >> x) 
+    {  
+        n_lst.push_back(x);
     }
 
-    cout << e_idxs << ' ';
-    cout << fixed << setprecision(1) << (double)t_idxs / threes;
+    vector<int> evals, threes;
+
+    for (int i = 0; i < (int)n_lst.size(); i++) 
+    {
+        int idx = i + 1;  
+        if (idx % 2 == 0)
+            evals.push_back(n_lst[i]);
+        if (idx % 3 == 0)
+            threes.push_back(n_lst[i]);
+    }
+
+    int sum_evals = 0;
+    for (int n : evals) sum_evals += n;
+
+    double sum_threes = 0;
+    for (int n : threes) sum_threes += n;
+
+    double avg_threes = sum_threes / threes.size();
+
+    cout << sum_evals << " " << fixed << setprecision(1) << avg_threes << '\n';
+
     return 0;
 }
