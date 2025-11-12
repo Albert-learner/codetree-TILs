@@ -21,6 +21,6 @@ int main()
     }
 
     cout << e_idxs << ' ';
-    cout << fixed << setprecision(1) << (double)t_idxs / threes;'
+    cout << fixed << setprecision(1) << (double)t_idxs / threes;
     return 0;
 }
