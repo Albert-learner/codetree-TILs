@@ -8,10 +8,9 @@ pq = []
 for elem in arr:
     hq.heappush(pq, -elem)
 
-while m > 0:
-    pq[0] += 1
-
-    hq.heapify(pq)
-    m -= 1
+for _ in range(m):
+    x = hq.heappop(pq)  
+    x += 1               
+    hq.heappush(pq, x)   
 
 print(-pq[0])
