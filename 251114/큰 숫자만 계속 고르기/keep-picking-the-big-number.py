@@ -2,14 +2,16 @@ n, m = map(int, input().split())
 arr = list(map(int, input().split()))
 
 # Please write your code here.
-from collections import deque
+import heapq as hq
 
-arr = sorted(deque(arr))
+pq = []
+for elem in arr:
+    hq.heappush(pq, -elem)
+
 while m > 0:
-    max_cst, max_cst_idx = arr[-1], -1
-    arr[max_cst_idx] -= 1
+    pq[0] += 1
 
-    arr = sorted(arr)
+    hq.heapify(pq)
     m -= 1
 
-print(max(arr))
+print(-pq[0])
