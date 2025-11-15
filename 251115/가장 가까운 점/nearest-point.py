@@ -2,19 +2,17 @@ n, m = map(int, input().split())
 points = [tuple(map(int, input().split())) for _ in range(n)]
 
 # Please write your code here.
-from collections import deque
+import heapq
 
-points.sort(lambda x: ((x[0] + x[1]), (x[0], x[1])))
-points = deque(points)
+heap = []
+for x, y in points:
+    heapq.heappush(heap, (x + y, x, y))
 
-while m > 0:
-    cx, cy = points.popleft()
-    cx += 2
-    cy += 2
-    points.appendleft((cx, cy))
-    points = list(points)
-    points.sort(lambda x: ((x[0] + x[1]), (x[0], x[1])))
-    points = deque(points)
-    m -= 1
+for _ in range(m):
+    d, x, y = heapq.heappop(heap)
+    x += 2
+    y += 2
+    heapq.heappush(heap, (x + y, x, y))
 
-print(points[0][0], points[0][1])
+_, x, y = heap[0]
+print(x, y)
