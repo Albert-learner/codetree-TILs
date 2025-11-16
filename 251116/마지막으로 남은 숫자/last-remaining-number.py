@@ -9,16 +9,15 @@ first, second = 0, 0
 for elem in arr:
     heapq.heappush(pq, -elem)
 
-while len(pq) >= 2:
-    first, second = heapq.heappop(pq), heapq.heappop(pq)
+while len(pq) > 1:
+    first = -heapq.heappop(pq) 
+    second = -heapq.heappop(pq)
     if first != second:
-        diff = int(abs(first)) - int(abs(second))
+        diff = first - second
         heapq.heappush(pq, -diff)
-    else:
-        first = heapq.heappop(pq)
-        second = heapq.heappop(pq)
-    
-    heapq.heapify(pq)
 
-print(int(abs(first)) - int(abs(second)))
-    
+# 결과 처리
+if len(pq) == 1:
+    print(-pq[0])
+else:
+    print(-1)
