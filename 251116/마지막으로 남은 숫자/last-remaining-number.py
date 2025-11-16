@@ -5,19 +5,20 @@ arr = list(map(int, input().split()))
 import heapq
 
 pq = []
+first, second = 0, 0
 for elem in arr:
     heapq.heappush(pq, -elem)
 
 while len(pq) >= 2:
-    if pq[0] != pq[1]:
-        first, second = heapq.heappop(pq), heapq.heappop(pq)
+    first, second = heapq.heappop(pq), heapq.heappop(pq)
+    if first != second:
         diff = int(abs(first)) - int(abs(second))
         heapq.heappush(pq, -diff)
     else:
-        heapq.heappop(pq)
-        heapq.heappop(pq)
+        first = heapq.heappop(pq)
+        second = heapq.heappop(pq)
     
     heapq.heapify(pq)
 
-print(int(abs(pq[0])))
+print(int(abs(first)) - int(abs(second)))
     
