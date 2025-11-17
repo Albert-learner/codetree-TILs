@@ -2,28 +2,31 @@ n = int(input())
 arr = list(map(int, input().split()))
 
 # Please write your code here.
-suffix_sum = [0] * (n + 1)
-for i in range(n - 1, -1, -1):
-    suffix_sum[i] = suffix_sum[i + 1] + arr[i]
+import heapq
 
-suffix_min = [0] * n
-cur_min = 10 ** 9
-for i in range(n - 1, -1, -1):
-    if arr[i] < cur_min:
-        cur_min = arr[i]
-    suffix_min[i] = cur_min
+# 변수 선언
+sum_val = 0
+max_avg = 0
+pq = []
 
-max_avg = 0.0
+heapq.heappush(pq, arr[n - 1])
+sum_val += arr[n - 1]
+# k가 N - 2일 때부터 1일 때까지 거꾸로 탐색합니다.
+# priority queue를 이용하여 진행합니다.
+for i in range(n - 2, 0, -1):
+    # 앞에서부터 K개를 삭제하고 나면
+    # 뒤에 i ~ n - 1 까지의 숫자만이 남습니다.
+    heapq.heappush(pq, arr[i])
+    sum_val += arr[i]
 
-for k in range(1, n - 1):
-    length = n - k         
-    if length <= 1:
-        continue            
-    total = suffix_sum[k]
-    mn = suffix_min[k]
-    avg = (total - mn) / (length - 1)
-    if avg > max_avg:
+    # 남아있는 정수 중 가장 작은 숫자를 찾아
+    # 그 숫자를 제외한 평균을 구합니다.
+    min_num = pq[0]
+    avg = (sum_val - min_num) / (n - i - 1)
+
+    # 평균이 최대가 된다면 정답을 현재 평균으로 갱신해줍니다.
+    if max_avg < avg:
         max_avg = avg
 
+# 평균값의 최대를 출력합니다.
 print(f"{max_avg:.2f}")
-    
