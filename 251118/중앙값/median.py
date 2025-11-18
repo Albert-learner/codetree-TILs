@@ -12,4 +12,5 @@ for _ in range(t):
         else:
             queue.append(elem)
 
+    queue.sort()
     print()
