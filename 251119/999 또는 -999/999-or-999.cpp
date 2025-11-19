@@ -18,7 +18,7 @@ int main()
             break;
         }
         min_cst = min(min_cst, nums[i]);
-        max_cst = max(max_cst, num[i]);
+        max_cst = max(max_cst, nums[i]);
     }
 
     cout << max_cst << ' ' << min_cst;
