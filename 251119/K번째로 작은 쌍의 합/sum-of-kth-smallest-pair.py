@@ -5,9 +5,23 @@ arr2 = list(map(int, input().split()))
 # Please write your code here.
 import heapq
 
+arr1.sort()
+arr2.sort()
+limit = min(n, k)
 pq = []
-for ar1_el in arr1:
-    for ar2_el in arr2:
-        heapq.heappush(pq, (ar1_el + ar2_el, ar1_el, ar2_el))
 
-print(pq[k - 1][0])
+for i in range(limit):
+    heapq.heappush(pq, (arr1[i] + arr2[0], i, 0))
+
+cnt = 0
+ans = 0
+
+while pq and cnt < k:
+    s, i, j = heapq.heappop(pq)
+    ans = s
+    cnt += 1
+
+    if j + 1 < m:
+        heapq.heappush(pq, (arr1[i] + arr2[j + 1], i, j + 1))
+
+print(ans)
