@@ -1,23 +1,41 @@
 #include <iostream>
-#include <algorithm>
+#include <vector>
+#include <unordered_map>
 using namespace std;
-
-int N, max_cst = 0;
-int nums[1000];
 
 int main() 
 {
+    int N;
     cin >> N;
+
+    vector<int> n_lst(N);
     for (int i = 0; i < N; i++) 
     {
-        cin >> nums[i];
+        cin >> n_lst[i];
     }
 
-    // Please write your code here.
-    for(int i = 0; i < N; i++)
+    unordered_map<int, int> n_dict;
+    n_dict.reserve(N);  
+
+    for (int n : n_lst) 
     {
-        max_cst = max(max_cst, nums[i]);
+        n_dict[n]++;
     }
-    cout << max_cst;
+
+    int answer = -1;
+    for (const auto &p : n_dict) 
+    {
+        int n = p.first;
+        int cnts = p.second;
+        if (cnts == 1) 
+        {
+            if (answer == -1 || n > answer) 
+            {
+                answer = n;
+            }
+        }
+    }
+
+    cout << answer << '\n';
     return 0;
 }
