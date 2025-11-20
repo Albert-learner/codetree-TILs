@@ -5,14 +5,18 @@ arr = list(map(int, input().split()))
 import heapq
 
 pq = []
-mul = 1
 for elem in arr:
     heapq.heappush(pq, elem)
 
     if len(pq) < 3:
         print(-1)
     else:
-        for sub_elem in pq[:3]:
-            mul *= sub_elem
+        a = heapq.heappop(pq)
+        b = heapq.heappop(pq)
+        c = heapq.heappop(pq)
 
-    print(mul)
+        print(a * b * c)
+
+        heapq.heappush(pq, a)
+        heapq.heappush(pq, b)
+        heapq.heappush(pq, c)
