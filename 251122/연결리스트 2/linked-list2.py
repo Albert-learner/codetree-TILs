@@ -17,8 +17,6 @@ for _ in range(Q):
     else:
         j_arr.append(0)
 
-# prev[x] : x번 노드의 이전 노드 번호 (없으면 0)
-# next[x] : x번 노드의 다음 노드 번호 (없으면 0)
 prev = [0] * (N + 1)
 next = [0] * (N + 1)
 
@@ -67,8 +65,9 @@ for q in range(Q):
         # 4 i : i번 노드의 이전/다음 노드 번호 출력
         out.append(f"{prev[i]} {next[i]}")
 
-# 중간 쿼리들에 대한 출력
-print("\n".join(out))
+# 중간 출력
+if out:
+    print("\n".join(out))  # 여기 개행이 이미 포함됨
 
-# 마지막에 1번부터 N번까지 각 노드의 "다음 노드" 번호 출력
-print(" ".join(str(next[i]) for i in range(1, N + 1)))
+# 마지막 출력 (추가 개행 없이 바로 이어서 출력)
+print(" ".join(str(next[i]) for i in range(1, N + 1)), end="")
