@@ -1,73 +1,57 @@
-import sys
-input = sys.stdin.readline
+# 한 노드를 나타내는 클래스입니다.
+class Node:
+    def __init__(self, id):
+        self.id = id
+        self.prev = None
+        self.next = None
 
-N = int(input())
-Q = int(input())
+# u 앞에 singleton을 삽입합니다.
+def insertPrev(u, singleton):
+    singleton.prev = u.prev
+    singleton.next = u
+    if singleton.prev is not None:
+        singleton.prev.next = singleton
+    if singleton.next is not None:
+        singleton.next.prev = singleton
 
-type_arr = []
-i_arr = []
-j_arr = []
+# u 뒤에 singleton을 삽입합니다.
+def insertNext(u, singleton):
+    singleton.prev = u
+    singleton.next = u.next
+    if singleton.prev is not None:
+        singleton.prev.next = singleton
+    if singleton.next is not None:
+        singleton.next.prev = singleton
 
-for _ in range(Q):
-    query = list(map(int, input().split()))
-    type_arr.append(query[0])
-    i_arr.append(query[1])
-    if query[0] in [2, 3]:
-        j_arr.append(query[2])
-    else:
-        j_arr.append(0)
+# 노드 u를 제거합니다.
+def pop(u):
+    if u.prev is not None:
+        u.prev.next = u.next
+    if u.next is not None:
+        u.next.prev = u.prev
+    u.prev = u.next = None
 
-prev = [0] * (N + 1)
-next = [0] * (N + 1)
+n = int(input())
+q = int(input())
 
-out = []
+# N 개의 단일 노드를 생성합니다.
+nodes = [None] + [Node(i) for i in range(1, n+1)]
 
-for q in range(Q):
-    t = type_arr[q]
-    i = i_arr[q]
-    j = j_arr[q]
+# Q 개의 연산을 진행합니다.
+for _ in range(q):
+    inputs = list(map(int, input().split()))
+    option = inputs[0]
+    i = inputs[1]
+    if option == 1:
+        pop(nodes[i])
+    elif option == 2:
+        j = inputs[2]
+        insertPrev(nodes[i], nodes[j])
+    elif option == 3:
+        j = inputs[2]
+        insertNext(nodes[i], nodes[j])
+    elif option == 4:
+        print((0 if nodes[i].prev is None else nodes[i].prev.id), (0 if nodes[i].next is None else nodes[i].next.id))
 
-    if t == 1:
-        # 1 i : i번 노드를 그 노드가 속해 있던 연결 리스트에서 분리 (단일 노드로)
-        pi = prev[i]
-        ni = next[i]
-
-        if pi != 0:
-            next[pi] = ni
-        if ni != 0:
-            prev[ni] = pi
-
-        prev[i] = 0
-        next[i] = 0
-
-    elif t == 2:
-        # 2 i j : 단일 노드인 j번 노드를 i번 노드 "앞"에 삽입
-        # j는 항상 prev[j] == 0, next[j] == 0 이라고 가정 가능
-        pi = prev[i]
-
-        prev[j] = pi
-        next[j] = i
-        prev[i] = j
-        if pi != 0:
-            next[pi] = j
-
-    elif t == 3:
-        # 3 i j : 단일 노드인 j번 노드를 i번 노드 "뒤"에 삽입
-        ni = next[i]
-
-        next[j] = ni
-        prev[j] = i
-        next[i] = j
-        if ni != 0:
-            prev[ni] = j
-
-    elif t == 4:
-        # 4 i : i번 노드의 이전/다음 노드 번호 출력
-        out.append(f"{prev[i]} {next[i]}")
-
-# 중간 출력
-if out:
-    print("\n".join(out))  # 여기 개행이 이미 포함됨
-
-# 마지막 출력 (추가 개행 없이 바로 이어서 출력)
-print(" ".join(str(next[i]) for i in range(1, N + 1)), end="")
+# 연산을 마친 후 1번 부터 N번 노드까지의 다음 노드 번호를 차례대로 한 줄에 출력합니다.
+print(' '.join(str(0 if nodes[i].next is None else nodes[i].next.id) for i in range(1, n+1)))
