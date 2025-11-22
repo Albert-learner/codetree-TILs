@@ -1,3 +1,6 @@
+import sys
+input = sys.stdin.readline
+
 N = int(input())
 Q = int(input())
 
@@ -14,7 +17,8 @@ for _ in range(Q):
     else:
         j_arr.append(0)
 
-# Please write your code here.
+# prev[x] : x번 노드의 이전 노드 번호 (없으면 0)
+# next[x] : x번 노드의 다음 노드 번호 (없으면 0)
 prev = [0] * (N + 1)
 next = [0] * (N + 1)
 
