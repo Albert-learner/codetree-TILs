@@ -9,6 +9,15 @@ int main()
     cin >> N;
     vector<vector<int>> board(N, vector<int>(N, 0));
 
+    for(int i = 0; i < N; i++)
+    {
+        for(int j = 0; j < N; j++)
+        {
+            if(i == 0 || j == 0)
+                board[i][j] = 1;
+        }
+    }
+
     for(int i = 1; i < N; i++)
     {
         for(int j = 1; j < N; j++)
