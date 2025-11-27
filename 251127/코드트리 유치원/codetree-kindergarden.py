@@ -83,13 +83,9 @@ for qi in range(Q):
         left = prev[ai]
         right = next[ai]
 
-        if left == 0 and right == 0:
+        if left == 0 or right == 0:
             out.append("-1")
-            continue
         else:
-            out_left = left
-            out_right = right
-
-        out.append(f"{out_left} {out_right}")
+            out.append(f"{left} {right}")
 
 print("\n".join(out))
