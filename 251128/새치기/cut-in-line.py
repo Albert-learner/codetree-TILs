@@ -1,177 +1,139 @@
-N, M, Q = map(int, input().split())
+MAX_N = 100002
+MAX_M = 10
 
-line = [[0] * 100000 for _ in range(10)]
-line_size = [0] * 10
-cmd = [[0] * 4 for _ in range(10000)]
+class Node:
+    # 사람들을 나타내는 노드입니다.
+    def __init__(self, id):
+        # 사람의 번호를 나타냅니다.
+        self.id = id
+        self.prev = None
+        self.next = None
 
-for i in range(M):
-    nums = list(map(int, input().split()))
-    if nums[0] == -1:
-        line_size[i] = 0
-        continue
-    line_size[i] = nums[0]
-    for j in range(nums[0]):
-        line[i][j] = nums[j + 1]
+def connect(s, e):
+    # 두 사람을 연결합니다.
+    if s is not None:
+        s.next = e
+    if e is not None:
+        e.prev = s
 
-for i in range(Q):
-    query = list(map(int, input().split()))
-    cmd[i][0] = query[0]
-    if query[0] == 1:
-        cmd[i][1] = query[1]
-        cmd[i][2] = query[2]
-    elif query[0] == 2:
-        cmd[i][1] = query[1]
-    elif query[0] == 3:
-        cmd[i][1] = query[1]
-        cmd[i][2] = query[2]
-        cmd[i][3] = query[3]
+# i번 사람을 집에 보냅니다.
+def pop(i):
+    # i번 사람이 어느 줄에 서있는지 확인합니다.
+    l = lineNum[i.id]
+    
+    # i번 사람이 어느 줄에도 서있지 않다면 아무것도 하지 않습니다.
+    if l == 0:
+        return
+    # i번 사람이 줄의 시작이었다면 줄의 시작을 다음 사람으로 바꿉니다.
+    if head[l] == i:
+        head[l] = i.next
+    # i번 사람이 줄의 끝이었다면 줄의 끝을 이전 사람으로 바꿉니다.
+    if tail[l] == i:
+        tail[l] = i.prev
 
-# Please write your code here.
-prev = [0] * (N + 1)
-next = [0] * (N + 1)
-line_of = [0] * (N + 1)
+    # i번 사람을 줄에서 뺍니다.
+    # 원래 i번 사람의 이전 사람과 다음 사람을 연결합니다.
+    if i.prev is not None:
+        i.prev.next = i.next
+    if i.next is not None:
+        i.next.prev = i.prev
 
-head = [0] * (M + 1)
-tail = [0] * (M + 1)
+    # i번 사람이 어느 줄에도 서있지 않다고 표시합니다.
+    lineNum[i.id] = 0
+    i.next = i.prev = None
 
-for li in range(M): 
-    sz = line_size[li]
-    if sz == 0:
-        continue
+def insertFront(a, b):
+    # a번 사람을 b번 사람 앞에 서게 합니다.
+    lineNumB = lineNum[b.id]
 
-    people = line[li][:sz]
-    ln = li + 1  
+    # b번 사람이 어느 줄에 서있는지 확인합니다.
+    if head[lineNumB] == b:
+        head[lineNumB] = a
 
-    head[ln] = people[0]
-    tail[ln] = people[-1]
+    # b번 사람이 해당 줄의 맨 앞이었다면, a번 사람을 줄의 맨 앞으로 만듭니다.
+    pop(a)
+    connect(b.prev, a)
+    connect(a, b)
 
-    for idx, p in enumerate(people):
-        line_of[p] = ln
-        if idx > 0:
-            prev[p] = people[idx - 1]
-            next[people[idx - 1]] = p
+    # a번 사람을 해당 줄에서 뺍니다.
+    lineNum[a.id] = lineNumB
 
-for qi in range(Q):
-    t = cmd[qi][0]
+    # a번 사람을 b번 사람 앞에 서게 합니다.
+def popRangeAndInsertPrev(a, b, c):
+    # a번 사람부터 b번 사람까지를 c번 사람 앞에 이동합니다.
+    lineNumA = lineNum[a.id]
+    lineNumC = lineNum[c.id]
 
-    if t == 1:
-        a = cmd[qi][1]
-        b = cmd[qi][2]
+    # a, c번 사람이 어느 줄에 서있는지 확인합니다.
+    if head[lineNumA] == a:
+        head[lineNumA] = b.next
+    if tail[lineNumA] == b:
+        tail[lineNumA] = a.prev
 
-        if line_of[a] == 0:
-            continue 
+    # a번 사람이 해당 줄의 맨 앞이었다면, 해당 줄의 맨 앞 사람을 b번 사람의 뒤로 변경합니다.
+    connect(a.prev, b.next)
+    if head[lineNumC] == c:
+        head[lineNumC] = a
+    else:
+        connect(c.prev, a)
 
-        la = line_of[a]
-        lb = line_of[b]
+    # b번 사람이 해당 줄의 맨 끝이었다면, 해당 줄의 맨 끝 사람을 a번 사람의 앞으로 변경합니다.
+    connect(b, c)
+    cur = a
 
-        pa = prev[a]
-        na = next[a]
+    # a번 사람부터 b번 사람까지를 줄에서 뺍니다.
+    while cur != b.next:
+        lineNum[cur.id] = lineNumC
+        cur = cur.next
 
-        if pa != 0:
-            next[pa] = na
-        else:
-            head[la] = na
+    # 이때 a번 사람의 이전 사람과 b번 사람의 다음 사람을 연결합니다.
 
-        if na != 0:
-            prev[na] = pa
-        else:
-            tail[la] = pa
-
-        prev[a] = 0
-        next[a] = 0
-        line_of[a] = 0 
-
-        pb = prev[b]
-
-        if pb != 0:
-            next[pb] = a
-        else:
-            head[lb] = a
-
-        prev[a] = pb
-        next[a] = b
-        prev[b] = a
-
-        line_of[a] = lb
-
-    elif t == 2:
-        a = cmd[qi][1]
-
-        if line_of[a] == 0:
-            continue
-
-        la = line_of[a]
-        pa = prev[a]
-        na = next[a]
-
-        if pa != 0:
-            next[pa] = na
-        else:
-            head[la] = na
-
-        if na != 0:
-            prev[na] = pa
-        else:
-            tail[la] = pa
-
-        prev[a] = 0
-        next[a] = 0
-        line_of[a] = 0
-
-    elif t == 3:
-        a = cmd[qi][1]
-        b = cmd[qi][2]
-        c = cmd[qi][3]
-
-        if line_of[a] == 0 or line_of[b] == 0:
-            continue
-
-        la = line_of[a]
-        lb = line_of[b]
-
-        pa = prev[a]
-        nb = next[b]
-
-        if pa != 0:
-            next[pa] = nb
-        else:
-            head[la] = nb
-
-        if nb != 0:
-            prev[nb] = pa
-        else:
-            tail[la] = pa
-
-        prev[a] = 0
-        next[b] = 0
-
-        lc = line_of[c]
-        pc = prev[c]
-
-        if pc != 0:
-            next[pc] = a
-        else:
-            head[lc] = a
-        prev[a] = pc
-
-        prev[c] = b
-        next[b] = c
-
-        cur = a
-        while True:
-            line_of[cur] = lc
-            if cur == b:
-                break
-            cur = next[cur]
-
-for ln in range(1, M + 1):
-    h = head[ln]
-    if h == 0:
+def printLine(l):
+    # 해당 줄을 전부 출력합니다.
+    cur = head[l]
+    if cur is None:
         print(-1)
     else:
-        res = []
-        cur = h
-        while cur != 0:
-            res.append(str(cur))
-            cur = next[cur]
-        print(" ".join(res))
+        while cur is not None:
+            print(cur.id, end=" ")
+            cur = cur.next
+        print()
+
+n, m, q = map(int, input().split())
+
+# m 개의 줄을 입력 받습니다.
+nodes = [None] * (MAX_N + 1)
+head = [None] * (MAX_M + 1)
+tail = [None] * (MAX_M + 1)
+lineNum = [0] * (MAX_N + 1)
+
+for i in range(1, m + 1):
+    line = list(map(int, input().split()))
+    l = line[0]
+    for j in range(l):
+        t = line[j + 1]
+        lineNum[t] = i
+        nodes[t] = Node(t)
+        if j == 0:
+            head[i] = tail[i] = nodes[t]
+        else:
+            connect(tail[i], nodes[t])
+            tail[i] = nodes[t]
+
+# q 개의 문자대로 시뮬레이션을 진행합니다.
+for _ in range(q):
+    option = list(map(int, input().split()))
+
+    if option[0] == 1:
+        a, b = option[1], option[2]
+        insertFront(nodes[a], nodes[b])
+    elif option[0] == 2:
+        a = option[1]
+        pop(nodes[a])
+    elif option[0] == 3:
+        a, b, c = option[1], option[2], option[3]
+        popRangeAndInsertPrev(nodes[a], nodes[b], nodes[c])
+
+# 출력
+for i in range(1, m + 1):
+    printLine(i)
