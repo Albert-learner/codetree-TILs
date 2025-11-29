@@ -1,26 +1,33 @@
-#include <iostream>
-#include <vector>
-#include <string>
+#include <bits/stdc++.h>
 using namespace std;
 
 int main() 
 {
-    // Please write your code here.
-    int a_cnts = 0, N, total_len = 0;
-    cin >> N;
-    vector<string>words(N);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-    for(int i = 0; i < N; i++)
+    int N;
+    cin >> N;
+    cin.ignore();   
+
+    vector<string> input_strs(N);
+    for (int i = 0; i < N; i++) 
     {
-        cin >> words[i];
-        for(int j = 0; j < words[i].length(); j++)
-        {
-            if(words[i][j] == 'a')
-                a_cnts += 1;
-        }
-        total_len += words[i].length();
+        getline(cin, input_strs[i]);
     }
 
-    cout << total_len << ' ' << a_cnts;
+    int total_lengths = 0;
+    int a_cnts = 0;
+
+    for (const string &s : input_strs) 
+    {
+        total_lengths += s.length();
+        if (!s.empty() && s[0] == 'a') 
+        {
+            a_cnts++;
+        }
+    }
+
+    cout << total_lengths << " " << a_cnts;
     return 0;
 }
