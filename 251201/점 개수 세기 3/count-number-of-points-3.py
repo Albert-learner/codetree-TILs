@@ -3,16 +3,13 @@ points = list(map(int, input().split()))
 queries = [tuple(map(int, input().split())) for _ in range(q)]
 
 # Please write your code here.
-sat_points = 0
+import bisect
+
+points.sort()
 
 for x, y in queries:
-    if x == y:
-        for point in points:
-            if point == x:
-                sat_points += 1
-    else:
-        for point in points:
-            if point in set(range(x, y)):
-                sat_points += 1
+    left = bisect.bisect_left(points, x)
+    right = bisect.bisect_right(points, y)
 
+    sat_points = right - left
     print(sat_points)
