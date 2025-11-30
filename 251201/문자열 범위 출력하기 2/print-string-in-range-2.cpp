@@ -5,16 +5,18 @@ using namespace std;
 
 int main() 
 {
-    // Please write your code here.
-    int idx;
     string input_str;
-    cin >> input_str;
-    cin >> idx;
+    getline(cin, input_str);   
+
+    int N;
+    cin >> N;
 
     reverse(input_str.begin(), input_str.end());
-    for(int i = 0; i < idx; i++)
+
+    for (int i = 0; i < N && i < input_str.length(); i++) 
     {
         cout << input_str[i];
     }
+
     return 0;
 }
