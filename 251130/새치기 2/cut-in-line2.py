@@ -1,167 +1,141 @@
-N, M, Q = map(int, input().split())
-names = input().split()
+class Node:
+    # 사람들을 나타내는 노드입니다.
+    def __init__(self, name):
+        # 사람의 번호를 나타냅니다.
+        self.name = name
+        self.prev = None
+        self.next = None
 
-command = []
-a = []
-b = []
-c = []
+def connect(s, e):
+    # 두 사람을 연결합니다.
+    if s is not None:
+        s.next = e
+    if e is not None:
+        e.prev = s
 
-for _ in range(Q):
-    line = input().split()
-    cmd = int(line[0])
-    command.append(cmd)
+def pop(node):
+    # i번 사람을 집에 보냅니다.
+    l = lineNum[personId[node.name]]
+    # i번 사람이 어느 줄에도 서있지 않다면 아무것도 하지 않습니다.
+    if l == 0:
+        return
 
-    if cmd == 1:
-        a.append(line[1])
-        b.append(line[2])
-        c.append("")
-    elif cmd == 2:
-        a.append(line[1])
-        b.append("")
-        c.append("")
+    # i번 사람이 줄의 시작이었다면 줄의 시작을 다음 사람으로 바꿉니다.
+    if head[l] == node:
+        head[l] = head[l].next
+    # i번 사람이 줄의 끝이었다면 줄의 끝을 이전 사람으로 바꿉니다.
+    if tail[l] == node:
+        tail[l] = tail[l].prev
+
+    # i번 사람을 줄에서 뺍니다.
+    if node.prev is not None:
+        node.prev.next = node.next
+    if node.next is not None:
+        node.next.prev = node.prev
+
+    # i번 사람이 어느 줄에도 서있지 않다고 표시합니다.
+    lineNum[personId[node.name]] = 0
+    node.next = node.prev = None
+
+def insert_front(a, b):
+    # a번 사람을 b번 사람 앞에 서게 합니다.
+    line_num_b = lineNum[personId[b.name]]
+    if head[line_num_b] == b:
+        head[line_num_b] = a
+    pop(a)
+    connect(b.prev, a)
+    connect(a, b)
+    lineNum[personId[a.name]] = line_num_b
+
+def pop_range_and_insert_prev(a, b, c):
+    # a번 사람부터 b번 사람까지를 c번 사람 앞에 이동합니다.
+    line_num_a = lineNum[personId[a.name]]
+    line_num_c = lineNum[personId[c.name]]
+
+    if head[line_num_a] == a:
+        head[line_num_a] = b.next
+    if tail[line_num_a] == b:
+        tail[line_num_a] = a.prev
+
+    connect(a.prev, b.next)
+
+    if head[line_num_c] == c:
+        connect(b, c)
+        head[line_num_c] = a
     else:
-        a.append(line[1])
-        b.append(line[2])
-        c.append(line[3])
+        connect(c.prev, a)
+        connect(b, c)
 
-# Please write your code here.
-name_to_id = {names[i]: i for i in range(N)}
+    cur = a
+    while cur != b:
+        lineNum[personId[cur.name]] = line_num_c
+        cur = cur.next
+    lineNum[personId[cur.name]] = line_num_c
 
-prev = [-1] * N
-nxt = [-1] * N
-
-head = [-1] * (M + 1)
-tail = [-1] * (M + 1)
-
-line_of = [0] * N
-
-X = N // M  
-for line_idx in range(M):  
-    ln = line_idx + 1      
-    start = line_idx * X
-    end = (line_idx + 1) * X - 1
-
-    head[ln] = start
-    tail[ln] = end
-
-    for i in range(start, end + 1):
-        line_of[i] = ln
-        if i > start:
-            prev[i] = i - 1
-        else:
-            prev[i] = -1
-        if i < end:
-            nxt[i] = i + 1
-        else:
-            nxt[i] = -1
-
-def detach_single(pid):
-    ln = line_of[pid]
-    if ln == 0:
-        return  
-
-    p = prev[pid]
-    n = nxt[pid]
-
-    if p != -1:
-        nxt[p] = n
-    else:
-        head[ln] = n
-
-    if n != -1:
-        prev[n] = p
-    else:
-        tail[ln] = p
-
-    prev[pid] = -1
-    nxt[pid] = -1
-    line_of[pid] = 0
-
-def detach_block(a_id, b_id):
-    ln = line_of[a_id]
-    pa = prev[a_id]
-    nb = nxt[b_id]
-
-    if pa != -1:
-        nxt[pa] = nb
-    else:
-        head[ln] = nb
-
-    if nb != -1:
-        prev[nb] = pa
-    else:
-        tail[ln] = pa
-
-    prev[a_id] = -1
-    nxt[b_id] = -1
-
-for qi in range(Q):
-    cmd = command[qi]
-
-    if cmd == 1:
-        name_a = a[qi]
-        name_b = b[qi]
-        ida = name_to_id[name_a]
-        idb = name_to_id[name_b]
-
-        detach_single(ida)
-
-        ln_b = line_of[idb]
-        pb = prev[idb]
-
-        if pb != -1:
-            nxt[pb] = ida
-        else:
-            head[ln_b] = ida
-
-        prev[ida] = pb
-        nxt[ida] = idb
-        prev[idb] = ida
-        line_of[ida] = ln_b
-
-    elif cmd == 2:
-        name_a = a[qi]
-        ida = name_to_id[name_a]
-        detach_single(ida)
-
-    else:
-        name_a = a[qi]
-        name_b = b[qi]
-        name_c = c[qi]
-
-        ida = name_to_id[name_a]
-        idb = name_to_id[name_b]
-        idc = name_to_id[name_c]
-
-        detach_block(ida, idb)
-
-        ln_c = line_of[idc]
-        pc = prev[idc]
-
-        if pc != -1:
-            nxt[pc] = ida
-        else:
-            head[ln_c] = ida
-
-        prev[ida] = pc
-        nxt[idb] = idc
-        prev[idc] = idb
-
-        cur = ida
-        while True:
-            line_of[cur] = ln_c
-            if cur == idb:
-                break
-            cur = nxt[cur]
-
-for ln in range(1, M + 1):
-    h = head[ln]
-    if h == -1:
+def print_line(l):
+    # 해당 줄을 전부 출력합니다.
+    cur = head[l]
+    if cur is None:
         print(-1)
-    else:
-        res = []
-        cur = h
-        while cur != -1:
-            res.append(names[cur])
-            cur = nxt[cur]
-        print(" ".join(res))
+        return
+
+    while cur is not None:
+        print(cur.name, end=" ")
+        cur = cur.next
+    print()
+
+# 사람들을 나타내는 노드들을 저장합니다.
+nodes = {}
+
+# 각 줄의 시작과 끝을 나타냅니다.
+head = {}
+tail = {}
+
+# 각 사람이 몇 번 줄에 서있는지 나타냅니다.
+lineNum = {}
+
+# 각 사람의 이름들을 번호로 바꿔줍니다.
+personId = {}
+
+# 입력
+n, m, q = map(int, input().split())
+
+# m 개의 줄을 입력 받습니다.
+personNum = 1
+x = list(input().split())
+for i in range(1, m + 1):
+    for j in range(n // m):
+        t = x[personNum - 1]
+        personId[t] = personNum
+        lineNum[personNum] = i
+
+        if j == 0:
+            tail[i] = head[i] = nodes[personNum] = Node(t)
+        else:
+            nodes[personNum] = Node(t)
+            connect(tail[i], nodes[personNum])
+            tail[i] = nodes[personNum]
+
+        personNum += 1
+
+# q 개의 문자대로 시뮬레이션을 진행합니다.
+for _ in range(q):
+    line = list(input().split())
+    option = int(line[0])
+
+    if option == 1:
+        x, y = line[1], line[2]
+        a, b = personId[x], personId[y]
+        insert_front(nodes[a], nodes[b])
+    elif option == 2:
+        x = line[1]
+        a = personId[x]
+        pop(nodes[a])
+    elif option == 3:
+        x, y, z = line[1], line[2], line[3]
+        a, b, c = personId[x], personId[y], personId[z]
+        pop_range_and_insert_prev(nodes[a], nodes[b], nodes[c])
+
+# 출력
+for i in range(1, m + 1):
+    print_line(i)
