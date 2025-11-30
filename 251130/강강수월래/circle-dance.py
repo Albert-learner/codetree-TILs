@@ -95,4 +95,4 @@ for _ in range(q):
 
     elif option == 3:
         a = line[1]
-        print_line(nodes[student_id[a]
+        print_line(nodes[student_id[a]])
