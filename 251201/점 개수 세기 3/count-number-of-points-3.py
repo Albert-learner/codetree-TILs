@@ -12,7 +12,7 @@ for x, y in queries:
                 sat_points += 1
     else:
         for point in points:
-            if point in range(x, y):
+            if point in set(range(x, y)):
                 sat_points += 1
 
     print(sat_points)
