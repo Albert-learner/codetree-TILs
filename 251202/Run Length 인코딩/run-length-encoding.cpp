@@ -39,10 +39,9 @@ string run_length_encoding(const string& input_str)
     return ret_str;
 }
 
-int main() 
-{
+int main() {
     string input_str;
-    getline(cin, input_str);
+    getline(cin, input_str);  // 공백 포함 문자열 입력
 
     string answer = run_length_encoding(input_str);
     cout << answer.length() << "\n";
