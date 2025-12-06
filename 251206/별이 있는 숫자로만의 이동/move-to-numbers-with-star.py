@@ -1,53 +1,41 @@
-n, k = map(int, input().split())
-board = [list(map(int, input().split())) for _ in range(n)]
+# 변수 선언 및 입력
+n, k = tuple(map(int, input().split()))
+arr = [
+    [0 for _ in range(n + 1)]
+    for _ in range(n + 1)
+]
+s = [
+    [0 for _ in range(n + 1)]
+    for _ in range(n + 1)
+]
 
-# Please write your code here.
-L = 2 * n - 1         
-offset = n - 1
-
-trans = [[0] * L for _ in range(L)]
+# 부분합 계산을 원할히 하기 위해 배열을 인덱스 1부터 입력받습니다.
 for i in range(n):
+    board = list(map(int, input().split()))
     for j in range(n):
-        u = i + j
-        v = i - j + offset
-        trans[u][v] = board[i][j]
+        arr[i + 1][j + 1] = board[j]
+    
+ans = 0
 
-ps = [[0] * (L + 1) for _ in range(L + 1)]
-for i in range(L):
-    row_ps = ps[i + 1]
-    prev_row_ps = ps[i]
-    row_t = trans[i]
-    s = 0
-    for j in range(L):
-        s += row_t[j]
-        row_ps[j + 1] = prev_row_ps[j + 1] + s
+# 배열의 누적합을 구합니다.
+for i in range(1, n + 1):
+    for j in range(1, n + 1):
+        s[i][j] = s[i][j - 1] + arr[i][j]
 
-def rect_sum(u0, v0, u1, v1):
-    return (ps[u1 + 1][v1 + 1]
-            - ps[u0][v1 + 1]
-            - ps[u1 + 1][v0]
-            + ps[u0][v0])
+# 모든 중심에 대해 최댓값을 구합니다.
+for i in range(1, n + 1):
+    for j in range(1, n + 1):
+        # 중심이 (i, j)일 때의 숫자 합을 구합니다.
+        sum_all = 0;
+        for r in range(i - k, i + k + 1):
+            # r행일때 (j - c ~ j + c)열 까지의 부분합을 더해줍니다.
+            c = k - abs(i - r);
 
-ans = 0  
+            # r행이 범위 안에 있을 경우 부분합을 더해줍니다.
+            if 1 <= r and r <= n:
+                sum_all += s[r][min(j + c, n)] - s[r][max(j - c - 1, 0)]
+        
+        ans = max(ans, sum_all)
 
-for x in range(n):
-    for y in range(n):
-        su = x + y
-        sv = x - y + offset
-
-        u0 = max(su - k, 0)
-        u1 = min(su + k, L - 1)
-        v0 = max(sv - k, 0)
-        v1 = min(sv + k, L - 1)
-
-        s = rect_sum(u0, v0, u1, v1)
-        if s > ans:
-            ans = s
-
+# 정답을 출력합니다.
 print(ans)
-
-
-
-
-
-
