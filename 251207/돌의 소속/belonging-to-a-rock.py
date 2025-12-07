@@ -1,30 +1,36 @@
-N, Q = map(int, input().split())
-arr = [int(input()) for _ in range(N)]
-queries = [tuple(map(int, input().split())) for _ in range(Q)]
+MAX_C = 3
 
-# Please write your code here.
-pref1 = [0] * (N + 1)
-pref2 = [0] * (N + 1)
-pref3 = [0] * (N + 1)
+# 변수 선언 및 입력:
+n, q = tuple(map(int, input().split()))
+arr = [0] + [
+    int(input())
+    for _ in range(n)
+]
 
-for i in range(1, N + 1):
-    g = arr[i - 1] 
-    pref1[i] = pref1[i - 1]
-    pref2[i] = pref2[i - 1]
-    pref3[i] = pref3[i - 1]
+prefix_sum = [
+    [0] * (n + 1)
+    for _ in range(MAX_C + 1)
+]
 
-    if g == 1:
-        pref1[i] += 1
-    elif g == 2:
-        pref2[i] += 1
-    elif g == 3:
-        pref3[i] += 1
 
-out_lines = []
-for a, b in queries:
-    cnt1 = pref1[b] - pref1[a - 1]
-    cnt2 = pref2[b] - pref2[a - 1]
-    cnt3 = pref3[b] - pref3[a - 1]
-    out_lines.append(f"{cnt1} {cnt2} {cnt3}")
+# 번호가 c인 돌 중 [s, e] 구간 내의 원소의 합을 반환합니다.
+def get_sum(c, s, e):
+    return prefix_sum[c][e] - prefix_sum[c][s - 1]
 
-print("\n".join(out_lines))
+
+# 누적합 배열을 만들어줍니다.
+# prefix_sum[i][j] : 번호가 i인 돌에 대한 누적합을 저장합니다.
+for i in range(1, 4):
+    prefix_sum[i][0] = 0
+    for j in range(1, n + 1):
+        # arr[j]가 i라면, 개수가 하나 더 증가합니다.
+        if arr[j] == i:
+            prefix_sum[i][j] = prefix_sum[i][j - 1] + 1
+        else:
+            prefix_sum[i][j] = prefix_sum[i][j - 1]
+
+# q개의 질의에 대해
+# 각 돌의 개수를 출력합니다.
+for _ in range(q):
+    a, b = tuple(map(int, input().split()))
+    print(get_sum(1, a, b), get_sum(2, a, b), get_sum(3, a, b))
