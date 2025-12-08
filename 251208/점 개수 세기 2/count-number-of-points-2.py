@@ -1,72 +1,78 @@
-n, q = map(int, input().split())
+from sortedcontainers import SortedSet
 
-points = [tuple(map(int, input().split())) for _ in range(n)]
-queries = [tuple(map(int, input().split())) for _ in range(q)]
+MAX_M = 5000
 
-# Please write your code here.
-from bisect import bisect_left, bisect_right
+# 변수 선언 및 입력
+n, q = tuple(map(int, input().split()))
+nums = SortedSet()
+mapper = {}
+prefix_sum = [
+    [0] * (MAX_M + 2)
+    for _ in range(MAX_M + 2)
+]
 
-ys = [y for _, y in points]
-ys_sorted = sorted(set(ys))
+points = [
+    tuple(map(int, input().split()))
+    for _ in range(n)
+]
 
-def compress_y(y):
-    return bisect_left(ys_sorted, y) + 1
+queries = [
+    tuple(map(int, input().split()))
+    for _ in range(q)
+]
 
-points = [(x, compress_y(y)) for (x, y) in points]
-points.sort()
 
-class BIT:
-    def __init__(self, n):
-        self.n = n
-        self.t = [0] * (n + 1)
+# x보다 같거나 큰 최초의 숫자를 구해
+# 이를 좌표압축 했을 때의 결과를 반환합니다.
+def get_lower_boundary(x):
+    return nums.bisect_left(x) + 1
 
-    def add(self, i, v):
-        while i <= self.n:
-            self.t[i] += v
-            i += i & -i
 
-    def prefix_sum(self, i):
-        s = 0
-        while i > 0:
-            s += self.t[i]
-            i -= i & -i
-        return s
+# x보다 같거나 작은 최초의 숫자를 구해
+# 이를 좌표압축 했을 때의 결과를 반환합니다.
+def get_upper_boundary(x):
+    return nums.bisect_right(x)
 
-    def range_sum(self, l, r):
-        if l > r:
-            return 0
-        return self.prefix_sum(r) - self.prefix_sum(l - 1)
 
-ny = len(ys_sorted)
-bit = BIT(ny)
+# (x1, y1), (x2, y2) 직사각형 구간 내의 점의 개수를 반환합니다.
+def get_sum(x1, y1, x2, y2):
+    return prefix_sum[x2][y2]     - prefix_sum[x1 - 1][y2] - \
+           prefix_sum[x2][y1 - 1] + prefix_sum[x1 - 1][y1 - 1]
 
-subqueries = []
-answers = [0] * q
 
-for idx, (x1, y1, x2, y2) in enumerate(queries):
-    l = bisect_left(ys_sorted, y1)
-    r = bisect_right(ys_sorted, y2) - 1
-    if l > r:
-        continue
+# 주어진 x, y 좌표값들을 전부 treeset에 넣어줍니다.
+for x, y in points:
+    nums.add(x)
+    nums.add(y)
 
-    ly = l + 1
-    ry = r + 1
+cnt = 1
+for num in nums:
+    mapper[num] = cnt
+    cnt += 1
 
-    subqueries.append((x2, ly, ry, +1, idx))
-    subqueries.append((x1 - 1, ly, ry, -1, idx))
+# 주어진 점들에 대해 
+# 누적합 배열을 완성합니다.
+for x, y in points:
+    # 좌표 압축을 진행합니다.
+    new_x, new_y = mapper[x], mapper[y]
+    prefix_sum[new_x][new_y] += 1
 
-subqueries.sort(key=lambda x: x[0])
+for i in range(1, cnt + 1):
+    for j in range(1, cnt + 1):
+        prefix_sum[i][j] += prefix_sum[i - 1][j] + prefix_sum[i][j - 1] - prefix_sum[i - 1][j - 1]
 
-p_idx = 0
-num_points = len(points)
+# 각 질의에 대해
+# 구간 내 점의 개수를 구합니다.
+for x1, y1, x2, y2 in queries:
+    # x1, y1의 경우 같거나 큰 최초의 위치를 lower_bound로,
+    # x2, y2의 경우 같거나 작은 최초의 위치를 upper_bound - 1로 구해줍니다.
 
-for T, ly, ry, sign, qi in subqueries:
-    while p_idx < num_points and points[p_idx][0] <= T:
-        _, cy = points[p_idx]
-        bit.add(cy, 1)
-        p_idx += 1
+    new_x1 = get_lower_boundary(x1)
+    new_y1 = get_lower_boundary(y1)
+    new_x2 = get_upper_boundary(x2)
+    new_y2 = get_upper_boundary(y2)
 
-    cnt = bit.range_sum(ly, ry)
-    answers[qi] += sign * cnt
-
-print("\n".join(map(str, answers)))
+    # 구간 내 점의 개수를 
+    # 누적합을 이용하여 계산합니다.
+    ans = get_sum(new_x1, new_y1, new_x2, new_y2)
+    print(ans)
