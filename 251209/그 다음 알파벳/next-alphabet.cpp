@@ -7,6 +7,11 @@ int main()
     char inp_chr;
     cin >> inp_chr;
 
-    cout << char((int)inp_chr + 1);
+    if(inp_chr != 'z')
+        cout << char((int)inp_chr + 1);
+    else
+    {
+        cout << 'a';
+    }
     return 0;
 }
