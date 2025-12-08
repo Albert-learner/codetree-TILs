@@ -13,7 +13,7 @@ def compress_y(y):
     return bisect_left(ys_sorted, y) + 1
 
 points = [(x, compress_y(y)) for (x, y) in points]
-points.sort() 
+points.sort()
 
 class BIT:
     def __init__(self, n):
@@ -53,6 +53,7 @@ for idx, (x1, y1, x2, y2) in enumerate(queries):
     ry = r + 1
 
     subqueries.append((x2, ly, ry, +1, idx))
+    subqueries.append((x1 - 1, ly, ry, -1, idx))
 
 subqueries.sort(key=lambda x: x[0])
 
