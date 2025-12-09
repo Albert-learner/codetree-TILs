@@ -1,26 +1,40 @@
+import sys
+
+INT_MAX = sys.maxsize
+
+# 변수 선언 및 입력:
 n = int(input())
-points = [tuple(map(int, input().split())) for _ in range(n)]
-x = [p[0] for p in points]
-y = [p[1] for p in points]
+x, y = [], []
 
-# Please write your code here.
-def dist(i, j):
-    return int(abs(x[i] - x[j]) + abs(y[i] - y[j]))
+L, R = [0] * n, [0] * n
+ans = INT_MAX
 
-L = [0] * n
-for i in range(1, n):
-    L[i] = L[i - 1] + dist(i - 1, i)
+# n개의 점 입력
+for _ in range(n):
+    given_x, given_y = tuple(map(int, input().split()))
+    x.append(given_x)
+    y.append(given_y)
 
-R = [0] * n
+# L 배열을 채워줍니다.
+# L[i] = 0번부터 i번까지 빠지는 부분 없이
+#        순서대로 방문하기 위해
+#        이동해야 하는 거리의 합
+L[0] = 0
+for i in range(1, n):    
+    L[i] = L[i - 1] + abs(x[i] - x[i - 1]) + abs(y[i] - y[i - 1])
+
+# R 배열을 채워줍니다.
+# R[i] = i번부터 n - 1번까지 빠지는 부분 없이
+#        순서대로 방문하기 위해
+#        이동해야 하는 거리의 합
+R[n - 1] = 0
 for i in range(n - 2, -1, -1):
-    R[i] = R[i + 1] + dist(i, i + 1)
+    R[i] = R[i + 1] + abs(x[i + 1] - x[i]) + abs(y[i + 1] - y[i])
 
-INF = 10 ** 18
-min_dists = INF
-
+# 각 체크포인트 마다
+# 건너 뛰었다고 했을 때,
+# 가능한 거리 합 중 최솟값을 계산합니다.
 for i in range(1, n - 1):
-    dists = L[i - 1] + dist(i - 1, i + 1) + R[i + 1]
-    if dists < min_dists:
-        min_dists = dists
+    ans = min(ans, L[i - 1] + R[i + 1] + abs(x[i + 1] - x[i - 1]) + abs(y[i + 1] - y[i - 1]))
 
-print(min_dists)
+print(ans)
