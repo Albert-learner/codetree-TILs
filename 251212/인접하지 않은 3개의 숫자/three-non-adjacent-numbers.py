@@ -1,26 +1,26 @@
+# 변수 선언 및 입력:
 n = int(input())
 arr = list(map(int, input().split()))
+L = [0] * n
+R = [0] * n
 
-# Please write your code here.
-INF = 10**18
-dp_not = [-INF] * 4
-dp_take = [-INF] * 4
+ans = 0
 
-dp_not[0] = 0               
-dp_take[1] = arr[0]
-
+# L 배열을 채워줍니다.
+# L[i] = 0번부터 i번 원소 중 최댓값
+L[0] = arr[0]
 for i in range(1, n):
-    new_not = [-INF] * 4
-    new_take = [-INF] * 4
+    L[i] = max(L[i - 1], arr[i])
 
-    for c in range(4):
-        new_not[c] = max(dp_not[c], dp_take[c])
+# R 배열을 채워줍니다.
+# R[i] = i번부터 n - 1번 원소 중 최댓값
+R[n - 1] = arr[n - 1]
+for i in range(n - 2, -1, -1):
+    R[i] = max(R[i + 1], arr[i])
 
-    for c in range(1, 4):
-        if dp_not[c - 1] > -INF:
-            new_take[c] = dp_not[c - 1] + arr[i]
-    
-    dp_not, dp_take = new_not, new_take
+# i번째 숫자가 세 숫자 중 가운데 숫자라고 했을 때
+# 가능한 최대 합 중 최댓값을 갱신해줍니다.
+for i in range(2, n - 2):
+    ans = max(ans, L[i - 2] + arr[i] + R[i + 2])
 
-answer = max(dp_not[3], dp_take[3])
-print(answer)
+print(ans)
