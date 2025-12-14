@@ -1,60 +1,48 @@
+# 변수 선언 및 입력:
 n = int(input())
-lines = [tuple(map(int, input().split())) for _ in range(n)]
+segments = [
+    tuple(map(int, input().split()))
+    for _ in range(n)
+]
 
-# Please write your code here.
-lines_sorted = sorted(((x1, x2, i) for i, (x1, x2) in enumerate(lines)),
-                      key = lambda x: x[0])
+L, R = [0] * n, [0] * n
 
-x2_list = [x2 for _, x2, _ in lines_sorted]
-sorted_x2 = sorted(set(x2_list))
-comp = {v: i + 1 for i, v in enumerate(sorted_x2)}
+# x1 기준으로 정렬합니다.
+segments.sort()
 
-class BIT:
-    def __init__(self, n):
-        self.n = n
-        self.tree = [0] * (n + 1)
+# L 배열을 채워줍니다.
+# L[i] = 0번부터 i번까지 선분 중
+#        최대 x2값
+_, x2 = segments[0]
+L[0] = x2
+for i in range(1, n):
+    _, x2 = segments[i]
+    L[i] = max(L[i - 1], x2)
 
-    def update(self, i, delta):
-        while i <= self.n:
-            self.tree[i] += delta
-            i += i & -i
+# R 배열을 채워줍니다.
+# R[i] = i번부터 n - 1번까지 선분 중
+#        최소 x2값
+_, x2 = segments[n - 1]
+R[n - 1] = x2
+for i in range(n - 2, -1, -1):
+    _, x2 = segments[i]
+    R[i] = min(R[i + 1], x2)
 
-    def query(self, i):
-        s = 0
-        while i > 0:
-            s += self.tree[i]
-            i -= i & -i
-        return s
-
-    def range_sum(self, l, r):
-        if l > r:
-            return 0
-        return self.query(r) - self.query(l - 1)
-
-
-m = len(sorted_x2)
-
-pos_x2 = [comp[x2] for _, x2, _ in lines_sorted]
-
-left_greater = [0] * n
-bit_left = BIT(m)
-total = 0
-for k in range(n):
-    idx = pos_x2[k]
-    left_greater[k] = total - bit_left.query(idx)
-    bit_left.update(idx, 1)
-    total += 1
-
-right_smaller = [0] * n
-bit_right = BIT(m)
-for k in range(n - 1, -1, -1):
-    idx = pos_x2[k]
-    right_smaller[k] = bit_right.query(idx - 1)
-    bit_right.update(idx, 1)
-
+# 각 선분 i에 대해
+# 왼쪽에서 가장 멀리 뻗은 L[i - 1] 값과
+# 오른쪽에서 가장 멀리 뻗은 R[i + 1] 값 모두와 겹치지 않는 경우에만
+# 답을 갱신해줍니다.
 ans = 0
-for k in range(n):
-    if left_greater[k] == 0 and right_smaller[k] == 0:
-        ans += 1
+for i in range(n):
+    _, x2 = segments[i]
+    # 왼쪽 선분과 겹치면 패스합니다.
+    if i > 0 and L[i - 1] >= x2:
+        continue
+    # 오른쪽 선분과 겹치면 패스합니다.
+    if i < n - 1 and R[i + 1] <= x2:
+        continue
+    
+    # 답을 갱신합니다.
+    ans += 1
 
 print(ans)
