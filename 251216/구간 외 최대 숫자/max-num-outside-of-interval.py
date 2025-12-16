@@ -1,26 +1,26 @@
-n, q = map(int, input().split())
+# 변수 선언 및 입력:
+n, q = tuple(map(int, input().split()))
 arr = list(map(int, input().split()))
-queries = [tuple(map(int, input().split())) for _ in range(q)]
+L = [0] * n
+R = [0] * n
 
-# Please write your code here.
-prefix_max = [0] * n
-prefix_max[0] = arr[0]
+# L 배열을 채워줍니다.
+# L[i] = 0번부터 i번 원소 중 최댓값
+L[0] = arr[0]
 for i in range(1, n):
-    prefix_max[i] = max(prefix_max[i - 1], arr[i])
+    L[i] = max(L[i - 1], arr[i])
 
-suffix_max = [0] * n
-suffix_max[n - 1] = arr[n - 1]
+# R 배열을 채워줍니다.
+# R[i] = i번부터 n - 1번 원소 중 최댓값
+R[n - 1] = arr[n - 1]
 for i in range(n - 2, -1, -1):
-    suffix_max[i] = max(suffix_max[i + 1], arr[i])
+    R[i] = max(R[i + 1], arr[i])
 
-out = []
-for a, b in queries:
-    l = a - 1
-    r = b - 1
-
-    left_max = prefix_max[l - 1] if l - 1 >= 0 else -1
-    right_max = suffix_max[r + 1] if r + 1 < n else -1
-
-    out.append(str(max(left_max, right_max)))
-
-print("\n".join(out))
+# q개의 질의에 대해
+# 구간 [a, b] 외 범위에서의 최댓값을 구합니다.
+# 구간 [a, b]외 범위에서의 최댓값은
+# L[a - 1], R[b + 1] 중 더 큰 값으로 계산이 가능합니다.
+for _ in range(q):
+    a, b = tuple(map(int, input().split()))
+    a, b = a - 1, b - 1
+    print(max(L[a - 1], R[b + 1]))
