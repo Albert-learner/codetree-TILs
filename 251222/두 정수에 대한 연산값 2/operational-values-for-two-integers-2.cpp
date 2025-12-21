@@ -2,12 +2,11 @@
 
 using namespace std;
 
+int a, b;
 pair<int, int> operate(int a, int b);
 
 int main() 
 {
-    
-    int a, b;
     cin >> a >> b;
     
     // Please write your code here.
@@ -26,7 +25,7 @@ pair<int, int> operate(int a, int b)
     else
     {
         b += 10;
-        a *= 2
+        a *= 2;
     }
 
     return {a, b};
