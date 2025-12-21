@@ -2,13 +2,14 @@
 
 using namespace std;
 
-int a, b;
 pair<int, int> operate(int a, int b);
 
 int main() 
 {
+    
+    int a, b;
     cin >> a >> b;
-
+    
     // Please write your code here.
     auto result = operate(a, b);
     cout << result.first << ' ' << result.second;
