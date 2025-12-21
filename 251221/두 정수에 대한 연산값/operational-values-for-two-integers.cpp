@@ -7,11 +7,18 @@ int a, b;
 int main() 
 {
     cin >> a >> b;
-    int max_n, min_n;
     // Please write your code here.
-    max_n = max(a, b) + 25;
-    min_n = min(a, b) * 2;
+    if(a > b)
+    {
+        a += 25;
+        b *= 2;
+    }
+    else
+    {
+        b += 25;
+        a *= 2;
+    }
+    cout << a << ' ' << b;
 
-    cout << min_n << ' ' << max_n;
     return 0;
 }
