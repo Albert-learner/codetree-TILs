@@ -1,22 +1,36 @@
+# 변수 선언 및 입력:
 n = int(input())
-intervals = [tuple(map(int, input().split())) for _ in range(n)]
-s = [interval[0] for interval in intervals]
-e = [interval[1] for interval in intervals]
 
-# Please write your code here.
-import heapq
+segments = []
+for _ in range(n):
+    x1, x2 = tuple(map(int, input().split()))
+    # 겹치는 날에 대한 처리를 
+    # 깔끔하게 하기 위해 시작날을 하루 땡겨줍니다.
+    segments.append((x1 - 1, x2))
 
-jobs = sorted(zip(s, e))
-
-heap = []
 ans = 0
+points = []
 
-for start, end in jobs:
-    while heap and heap[0] < start:
-        heapq.heappop(heap)
+# 주어진 좌표의 범위가 큰 경우에는
+# 각 선분을 두 지점으로 나눠서
+# +1, -1로 담은 뒤,
+# 정렬해줍니다.
+for x1, x2 in segments:
+    points.append((x1, +1)) # 시작점
+    points.append((x2, -1)) # 끝점
 
-    heapq.heappush(heap, end)
-    if len(heap) > ans:
-        ans = len(heap)
+# 정렬을 진행합니다.
+points.sort()
+
+# 각 위치에 적혀있는 숫자들의 합을 구하면
+# 매 순간마다 겹치는 구간의 횟수가 구해집니다.
+# 이 중 최댓값을 구하면 됩니다.
+sum_val = 0
+for x, v in points:
+    # 적혀있는 가중치를 전부 더해줍니다.
+    sum_val += v
+
+    # 최댓값을 갱신해줍니다.
+    ans = max(ans, sum_val)
 
 print(ans)
