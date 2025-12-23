@@ -1,42 +1,39 @@
 #include <iostream>
-
+#include <vector>
 using namespace std;
 
-int n, m;
-int A[100];
-int operate(int M, int A_arr[]);
-
-int main() 
+long long operate(int m, const vector<long long>& a_seq) 
 {
-    cin >> n >> m;
+    long long answer = 0;
 
-    for (int i = 0; i < n; i++) 
+    while (m >= 1) 
     {
-        cin >> A[i];
-    }
-
-    // Please write your code here.
-    cout << operate(m, A);
-    return 0;
-}
-
-int operate(int M, int A_arr[])
-{
-    int answer = 0;
-
-    while(M >= 1)
-    {
-        if(m % 2 == 1)
+        if (m % 2 == 1) 
         {
-            answer += A_arr[M - 1];
-            M -= 1;
-        }
-        else
+            answer += a_seq[m - 1];
+            m -= 1;
+        } 
+        else 
         {
-            answer += A_arr[M - 1];
-            M /= 2;
+            answer += a_seq[m - 1];
+            m /= 2;
         }
     }
 
     return answer;
+}
+
+int main() 
+{
+    int N, M;
+    cin >> N >> M;
+
+    vector<long long> a_seq(N);
+    for (int i = 0; i < N; i++) 
+    {
+        cin >> a_seq[i];
+    }
+
+    cout << operate(M, a_seq);
+    return 0;
 }
