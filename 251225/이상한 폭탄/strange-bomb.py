@@ -2,18 +2,13 @@ n, k = map(int, input().split())
 arr = [int(input()) for _ in range(n)]
 
 # Please write your code here.
-from collections import Counter
+last_pos = {}
+ans = -1
 
-bombs = []
+for i, x in enumerate(arr):
+    if x in last_pos and i - last_pos[x] <= k:
+        if x > ans:
+            ans = x
+    last_pos[x] = i
 
-for idx in range(len(arr) - k):
-    i_num = arr[idx]
-    valid_cntr = Counter(arr[idx:idx + k + 1])
-    if valid_cntr[i_num] >= 2:
-        bombs.append(i_num)
-
-if len(bombs) == 0:
-    print(-1)
-else:
-    print(max(bombs))
-
+print(ans)
