@@ -21,7 +21,9 @@ void print_star(int num)
 
     for(int i = 0; i < num; i++)
         cout << '*';
+    cout << endl;
     print_star(num - 1);
     for(int i = 0; i < num; i++)
         cout << '*';
+    cout << endl;
 }
