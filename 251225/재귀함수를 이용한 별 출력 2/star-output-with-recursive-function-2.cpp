@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <string>
 using namespace std;
 
 int n;
@@ -20,10 +20,10 @@ void print_star(int num)
         return ;
 
     for(int i = 0; i < num; i++)
-        cout << '*';
+        cout << "* ";
     cout << endl;
     print_star(num - 1);
     for(int i = 0; i < num; i++)
-        cout << '*';
+        cout << "* ";
     cout << endl;
 }
