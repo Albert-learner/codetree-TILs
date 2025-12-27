@@ -1,26 +1,30 @@
 #include <iostream>
-
 using namespace std;
 
-int n;
-int recur_seq(int num);
+long long recur_seq(int num);
 
 int main() 
 {
-    cin >> n;
+    long long N;
+    cin >> N;
 
-    // Please write your code here.
-    cout << recur_seq(n);
+    cout << recur_seq(N);
     return 0;
 }
 
-int recur_seq(int num)
+long long recur_seq(long long n) 
 {
-    if(num == 1)
+    if (n == 1) 
+    {
         return 0;
+    }
 
-    if(num % 2 == 0)
-        return recur_seq((int)(num / 2)) + 1;
-    else
-        return recur_seq((int)(num / 3 + 1)) + 1;
+    if (n % 2 == 0) 
+    {
+        return recur_seq(n / 2) + 1;
+    } 
+    else 
+    {
+        return recur_seq(n * 3 + 1) + 1;
+    }
 }
