@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-long long recur_seq(int num);
+long long recur_seq(long long num);
 
 int main() 
 {
