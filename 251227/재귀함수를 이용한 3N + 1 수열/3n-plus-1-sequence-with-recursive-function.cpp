@@ -22,5 +22,5 @@ int recur_seq(int num)
     if(num % 2 == 0)
         return recur_seq((int)(num / 2)) + 1;
     else
-        return recur_seq((int)(num / 3) + 1) + 1;
+        return recur_seq((int)(num / 3 + 1)) + 1;
 }
