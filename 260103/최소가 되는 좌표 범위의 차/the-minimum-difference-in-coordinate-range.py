@@ -1,37 +1,54 @@
-n, d = map(int, input().split())
-points = [tuple(map(int, input().split())) for _ in range(n)]
-x, y = zip(*points)
-x, y = list(x), list(y)
+import sys
+from sortedcontainers import SortedSet
 
-# Please write your code here.
-from collections import deque
+n, d = tuple(map(int, input().split()))
+point = [
+    tuple(map(int, input().split()))
+    for _ in range(n)
+]
 
-points.sort()
-xs = [p[0] for p in points]
-ys = [p[1] for p in points]
+point = [(0, 0)] + sorted(point)
 
-minq = deque()  
-maxq = deque() 
+# 변수 선언
+point_count = SortedSet()
 
-ans = float('inf')
-l = 0
+def get_min():
+    if not point_count: return 0
+    return point_count[0][0]
 
-for r in range(n):
-    while minq and ys[minq[-1]] >= ys[r]:
-        minq.pop()
-    minq.append(r)
+def get_max():
+    if not point_count: return 0
+    return point_count[-1][0]
 
-    while maxq and ys[maxq[-1]] <= ys[r]:
-        maxq.pop()
-    maxq.append(r)
 
-    while l <= r and ys[maxq[0]] - ys[minq[0]] >= d:
-        ans = min(ans, xs[r] - xs[l])
+# 가능한 구간 중 최소 크기를 구합니다.
+ans = sys.maxsize
 
-        if minq and minq[0] == l:
-            minq.popleft()
-        if maxq and maxq[0] == l:
-            maxq.popleft()
-        l += 1
+# 구간을 잡아봅니다.
+j = 0
+for i in range(1, n + 1):
+    # y좌표 차가 d가 되기 전까지 계속 진행합니다.
+    while j + 1 <= n and get_max() - get_min() < d:
+        point_count.add((point[j + 1][1], point[j + 1][0]))
+        j += 1
 
-print(-1 if ans == float('inf') else ans)
+    # 만약 최대한 이동했는데도
+    # y좌표 차가 d가 되지 못했다면
+    # 탐색을 종료합니다.
+    if get_max() - get_min() < d:
+        break
+
+    # 현재 구간 [i, j]는 
+    # point[i]를 시작점으로 하는
+    # 가장 짧은 구간이므로
+    # 구간 크기 중 최솟값을 갱신합니다.
+    ans = min(ans, point[j][0]-point[i][0])
+    
+    # 다음 구간으로 넘어가기 전에
+    # point[i]에 해당하는 값은 point_count에서 지워줍니다.
+    point_count.remove((point[i][1], point[i][0]))
+
+# 만약 불가능하다면
+# -1을 답으로 합니다.
+if ans == sys.maxsize: print(-1)
+else: print(ans)
