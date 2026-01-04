@@ -7,7 +7,7 @@ using namespace std;
 struct Person 
 {
     string name;
-    int height;
+    double height;
     double weight;
 };
 
@@ -19,7 +19,7 @@ int main()
     for (int i = 0; i < 5; i++) 
     {
         string name;
-        int height;
+        double height;
         double weight;
         cin >> name >> height >> weight;
         people.push_back({name, height, weight});
@@ -40,16 +40,15 @@ int main()
 
     cout << "\n";
 
+    // 키 기준 내림차순 정렬
     vector<Person> height_sort = people;
     sort(height_sort.begin(), height_sort.end(),
-         [](const Person& a, const Person& b) 
-         {
+         [](const Person& a, const Person& b) {
              return a.height > b.height;
          });
 
     cout << "height\n";
-    for (const auto& p : height_sort) 
-    {
+    for (const auto& p : height_sort) {
         cout << p.name << " " << p.height << " " << p.weight << "\n";
     }
 
