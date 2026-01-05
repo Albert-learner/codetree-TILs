@@ -26,11 +26,13 @@ int main()
         points.push_back({x, y, i});
     }
 
-    sort(points.begin(), points.end(),
-         [](const Point& a, const Point& b) 
-         {
-             return abs(a.x) + abs(a.y) < abs(b.x) + abs(b.y);
-         });
+    stable_sort(points.begin(), points.end(),
+        [](const Point& a, const Point& b) {
+            long long da = (long long)abs(a.x) + (long long)abs(a.y);
+            long long db = (long long)abs(b.x) + (long long)abs(b.y);
+            return da < db;
+        }
+    );
 
     for (const auto& p : points) 
     {
