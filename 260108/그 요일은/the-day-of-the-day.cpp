@@ -13,7 +13,7 @@ int main()
     vector<int> months = {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
     auto get_num = [&](const string& f_day) -> int{
-        for(int i = 0; i < (int)days.size(); i++)
+        for(int i = 0; i < 7; i++)
             if(days[i] == f_day) 
                 return i;
 
