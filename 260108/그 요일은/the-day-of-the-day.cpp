@@ -34,7 +34,7 @@ int main()
     
     if(diff_days < 0)
         cout << 0 << endl;
-    els
+    else
         cout << (diff_days / 7 + 1) << "\n";
     return 0;
 }
