@@ -31,6 +31,10 @@ int main()
     };
 
     long long diff_days = total_days(m2, d2) - total_days(m1, d1);
-    cout << (diff_days / 7 + 1) << "\n";
+    
+    if(diff_days < 0)
+        cout << 0 << endl;
+    els
+        cout << (diff_days / 7 + 1) << "\n";
     return 0;
 }
