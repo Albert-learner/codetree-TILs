@@ -8,9 +8,6 @@ for qry in queries:
     left, right = 0, n - 1
 
     while left <= right:
-        if qry not in arr:
-            break
-
         mid = (left + right) // 2
         if arr[mid] == qry:
             idx = mid + 1
@@ -21,4 +18,4 @@ for qry in queries:
         else:
             left = mid + 1
 
-    print(idx)
+    print(idx if qry in arr else -1)
