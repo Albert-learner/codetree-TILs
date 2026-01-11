@@ -1,18 +1,41 @@
-n, k = map(int, input().split())
-arr = list(map(int, input().split()))
+import sys
 
-# Please write your code here.
-left, cnts_one, ans = 0, 0, n + 1
+INT_MAX = sys.maxsize
 
-for right in range(n):
-    if arr[right] == 1:
-        cnts_one += 1
+# 변수 선언 및 입력:
+n, k = tuple(map(int, input().split()))
+arr = [0] + list(map(int, input().split()))
 
-    while cnts_one >= k:
-        ans = min(ans, right - left + 1)
-        if arr[left] == 1:
-            cnts_one -= 1
-        
-        left += 1
+# 가능한 구간 중 최소 크기를 구합니다.
+ans = INT_MAX
 
-print(-1 if ans == n + 1 else ans)
+# 구간을 잡아봅니다.
+ones_cnt = 0
+j = 0
+for i in range(1, n + 1):
+    # 숫자 1이 k개가 되기 전까지 계속 전진합니다.
+    while j + 1 <= n and ones_cnt < k:
+        if arr[j + 1] == 1:
+            ones_cnt += 1
+        j += 1
+
+    # 만약 최대한 진행했음에도 아직 숫자 1의 개수가 k개가 되지 않는다면
+    # 절대 불가능하므로 탐색을 멈춥니다.
+    if ones_cnt < k:
+        break
+    
+    # 현재 구간 [i, j]는 
+    # i를 시작점으로 하는
+    # 가장 짧은 구간이므로
+    # 구간 크기 중 최솟값을 갱신합니다.
+    ans = min(ans, j - i + 1)
+
+    # 다음 구간으로 넘어가기 전에
+    # arr[i]에 해당하는 값에 대해 1의 개수를 갱신해줍니다.
+    if arr[i] == 1:
+        ones_cnt -= 1
+
+if ans == INT_MAX:
+    ans = -1
+
+print(ans)
