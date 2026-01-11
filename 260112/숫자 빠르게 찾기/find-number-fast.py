@@ -18,4 +18,4 @@ for qry in queries:
         else:
             left = mid + 1
 
-    print(idx if qry in arr else -1)
+    print(idx)
