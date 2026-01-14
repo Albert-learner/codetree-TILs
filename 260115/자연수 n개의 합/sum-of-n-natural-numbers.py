@@ -1,13 +1,16 @@
 s = int(input())
 
 # Please write your code here.
-s_sum, num = 0, 0
+left, right = 1, 2_000_000_000
+ans = 0
 
-while s_sum < s:
-    num += 1
-    s_sum += num
+while left <= right:
+    mid = (left + right) // 2
+    total = mid * (mid + 1) // 2
+    if total <= s:
+        ans = mid
+        left = mid + 1
+    else:
+        right = mid - 1
 
-if s_sum > s:
-    print(num - 1)
-else:
-    print(num)
+print(ans)
