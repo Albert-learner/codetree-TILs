@@ -1,20 +1,20 @@
 n = int(input())
 
 # Please write your code here.
-idx = 1
-nums_lst, digits_lst = [], []
+def count_numbers_upto(x: int) -> int:
+    moo = x // 3 + x // 5 - x // 15
 
-while idx <= 10 ** 9:
-    if idx % 3 == 0 or idx % 5 == 0:
-        nums_lst.append("Moo")
+    return x - moo
+
+lo, hi = 1, 2
+while count_numbers_upto(hi) < n:
+    hi *= 2
+
+while lo < hi:
+    mid = (lo + hi) // 2
+    if count_numbers_upto(mid) >= n:
+        hi = mid
     else:
-        nums_lst.append(idx)
+        lo = mid + 1
 
-    if len(digits_lst) < n:
-        if nums_lst[-1] != "Moo":
-            digits_lst.append(idx)
-    elif len(digits_lst) == n:
-        print(digits_lst[-1])
-        break
-
-    idx += 1
+print(lo)
