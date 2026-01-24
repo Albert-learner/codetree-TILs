@@ -1,54 +1,74 @@
 from collections import deque
 
-M, N = map(int, input().split())
+# 변수 선언 및 입력
+m, n = tuple(map(int, input().split()))
+board = [list(map(int, input().split())) for _ in range(m)]
+colored = [list(map(int, input().split())) for _ in range(m)]
 
-board = [list(map(int, input().split())) for _ in range(M)]
-colored = [list(map(int, input().split())) for _ in range(M)]
+dxs = [-1, 0, 1, 0]
+dys = [0, -1, 0, 1]
 
-colored_cells = []
-minv, maxv = 10**18, -10**18
-for r in range(M):
-    for c in range(N):
-        v = board[r][c]
-        if v < minv: minv = v
-        if v > maxv: maxv = v
-        if colored[r][c] == 1:
-            colored_cells.append((r, c))
+visited = [
+    [False for _ in range(n)]
+    for _ in range(m)
+]
 
-if len(colored_cells) <= 1:
-    print(0)
-    exit()
-
-dr = (1, -1, 0, 0)
-dc = (0, 0, 1, -1)
-
-def can_connect(D: int) -> bool:
-    sr, sc = colored_cells[0]
-    visited = [[False] * N for _ in range(M)]
-    q = deque([(sr, sc)])
-    visited[sr][sc] = True
+# bfs를 통해 d 이하로 차이 나는 칸만 갈 수 있을 때,
+# 갈 수 있는 지점을 전부 구해줍니다.
+def bfs(d):
+    q = deque()
+    q.append((start_x, start_y))
+    visited[start_x][start_y] = True
 
     while q:
-        r, c = q.popleft()
-        cur = board[r][c]
-        for k in range(4):
-            nr, nc = r + dr[k], c + dc[k]
-            if 0 <= nr < M and 0 <= nc < N and not visited[nr][nc]:
-                if abs(board[nr][nc] - cur) <= D:
-                    visited[nr][nc] = True
-                    q.append((nr, nc))
+        p = q.popleft()
 
-    for r, c in colored_cells:
-        if not visited[r][c]:
-            return False
+        # 인접한 칸 중 갈 수 있는 칸을 찾아
+        # 갈 수 있다면 queue에 넣습니다.
+        for (dx, dy) in zip(dxs, dys):
+            next_x = p[0] + dx
+            next_y = p[1] + dy
+            if next_x >= 0 and next_x < m and next_y >= 0 and next_y < n:
+                if not visited[next_x][next_y] and abs(board[p[0]][p[1]] - board[next_x][next_y]) <= d:
+                    q.append((next_x, next_y))
+                    visited[next_x][next_y] = True
+
+
+# d 이하로 차이 나는 칸만 갈 수 있을 때,
+# 모든 색칠된 칸으로 이동할 수 있는지 확인합니다.
+def reachable(d):
+    # visited 배열을 초기화합니다.
+    for i in range(m):
+        for j in range(n):
+            visited[i][j] = False
+
+    bfs(d)
+
+    # 모든 색칠된 칸으로 이동할 수 있는지 확인합니다.
+    for i in range(m):
+        for j in range(n):
+            if colored[i][j] and not visited[i][j]:
+                return False
     return True
 
-lo, hi = 0, maxv - minv 
-while lo < hi:
-    mid = (lo + hi) // 2
-    if can_connect(mid):
-        hi = mid
-    else:
-        lo = mid + 1
+for i in range(m):
+    for j in range(n):
+        # 시작점(색칠된 점 중에서)을 구합니다.
+        if colored[i][j]:
+            start_x = i
+            start_y = j
 
-print(lo)
+lo = 0                     # 답이 될 수 있는 가장 작은 숫자 값을 설정합니다.
+hi = 1000000000            # 답이 될 수 있는 가장 큰 숫자 값을 설정합니다.
+ans = 0                    # 답을 저장합니다.
+
+while lo <= hi:            # [lo, hi]가 유효한 구간이면 계속 수행합니다.
+    mid = (lo + hi) // 2   # 가운데 위치를 선택합니다.
+    if reachable(mid):     # 결정문제에 대한 답이 Yes라면
+        hi = mid - 1       # 왼쪽에 조건을 만족하는 숫자가 더 있을 가능성 때문에 right를 바꿔줍니다.
+        ans = mid          # 답의 후보들 중 최댓값을 계속 갱신해줍니다.
+    else:
+        lo = mid + 1       # 결정문제에 대한 답이 No라면 right를 바꿔줍니다.
+
+# 정답을 출력합니다.
+print(ans)
