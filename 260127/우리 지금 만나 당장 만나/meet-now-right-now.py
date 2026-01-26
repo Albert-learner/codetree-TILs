@@ -1,32 +1,39 @@
+# 변수 선언 및 입력:
 n = int(input())
 x = list(map(int, input().split()))
 v = list(map(int, input().split()))
 
-# Please write your code here.
-def can_meet(t: float) -> bool:
-    left = -1e30
-    right = 1e30
 
-    for xi, vi in zip(x, v):
-        reach = t * vi
-        l = xi - reach
-        r = xi + reach
-        if l > left:
-            left = l
-        if r < right:
-            right = r
-        
-        if left > right:
-            return False
+# time시간 동안 모든 사람이 도착할 수 있는지 판단합니다.
+def is_possible(time):
+    max_x1 = x[0] - v[0] * time
+    min_x2 = x[0] + v[0] * time
+    for i in range(1, n):
+        # i번 사람은 time시간에 x1 ~ x2 사이에만 있을 수 있습니다.
+        x1 = x[i] - v[i] * time
+        x2 = x[i] + v[i] * time
 
-    return True
+        # x1들 중 최댓값을 찾아 max_x1에 저장합니다.
+        max_x1 = max(max_x1, x1)
 
-lo, hi = 0.0, 1e9
-for _ in range(70):
-    mid = (lo + hi) / 2
-    if can_meet(mid):
-        hi = mid
+        # x2들 중 최솟값을 찾아 min_x2에 저장합니다.
+        min_x2 = min(min_x2, x2)
+
+    # 가능한 구간이 존재하면 모든 사람이 한 곳에 모일 수 있습니다.
+    return max_x1 <= min_x2
+ 
+   
+lo = 0                          # 답이 될 수 있는 가장 작은 숫자 값을 설정합니다.
+hi = 1e9                        # 답이 될 수 있는 가장 큰 숫자 값을 설정합니다.
+ans = 1e9                       # 답을 저장합니다.
+
+for _ in range(100):            # 실수형이기 때문에 횟수를 정해 이진 탐색을 수행합니다. 
+    mid = (lo + hi) / 2        # 가운데 위치를 선택합니다.
+    if is_possible(mid):        # 결정문제에 대한 답이 Yes라면
+        hi = mid                # 왼쪽에 조건을 만족하는 숫자가 더 있을 가능성 때문에 hi를 바꿔줍니다.
+        ans = min(ans, mid)     # 답의 후보들 중 최솟값을 계속 갱신해줍니다.
     else:
-        lo = mid
+        lo = mid                # 결정문제에 대한 답이 No라면 lo를 바꿔줍니다.
 
-print(f"{hi:.4f}")
+# 정답을 출력합니다.
+print(f"{ans:.4f}")
