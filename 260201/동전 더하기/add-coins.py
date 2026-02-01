@@ -1,15 +1,14 @@
-n, k = map(int, input().split())
-coins = [int(input()) for _ in range(n)]
+# 변수 선언 및 입력:
+n, k = tuple(map(int, input().split()))
+coins = [
+    int(input())
+    for _ in range(n)
+]
+ans = 0
 
-# Please write your code here.
-coins.sort(reverse = True)
-
-cnts = 0
-for coin in coins:
-    if k == 0:
-        break
-
-    cnts += k // coin
+# 큰 동전부터 이용합니다.
+for coin in coins[::-1]:
+    ans += k // coin
     k %= coin
 
-print(cnts)
+print(ans)
