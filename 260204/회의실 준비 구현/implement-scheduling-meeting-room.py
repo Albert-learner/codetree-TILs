@@ -1,24 +1,34 @@
-# 변수 선언 및 입력:
-n = int(input())
-meetings = [
-    tuple(map(int, input().split()))
-    for _ in range(n)
-]
+import sys
+import heapq
 
-# 끝나는 시간을 기준으로 정렬합니다.
-meetings.sort(key=lambda x: x[1])
+def main():
+    input = sys.stdin.readline
 
-# 끝나는 시간이 증가하는 순으로 보며
-# 겹치지 않는 경우에 해당하는 회의를
-# 전부 선택합니다.
+    n = int(input().strip())
+    pq = []
 
-# 가장 최근에 잡힌 회의가 끝난 시간을 기록하며 진행합니다.
-last_e, ans = -1, 0
-for s, e in meetings:
-    # 이전 회의와 겹치지 않는다면
-    # 해당 회의를 선택해줍니다. 
-    if last_e <= s:
-        last_e = e
-        ans += 1
+    # (start, end) 기준으로 최소힙 구성 (Java compareTo와 동일: s 오름차순, s 같으면 e 오름차순)
+    for _ in range(n):
+        s, e = map(int, input().split())
+        heapq.heappush(pq, (s, e))
 
-print(ans)
+    current_s, current_e = heapq.heappop(pq)
+    res = 1
+
+    while pq:
+        next_s, next_e = heapq.heappop(pq)
+
+        # 마지막으로 고른 것보다 더 빨리 끝낼 수 있으면 교체
+        if next_e < current_e:
+            current_s, current_e = next_s, next_e
+            continue
+
+        # 마지막으로 고른 것 이후에 시작 가능하면 추가로 선택
+        if next_s >= current_e:
+            res += 1
+            current_s, current_e = next_s, next_e
+
+    print(res)
+
+if __name__ == "__main__":
+    main()
