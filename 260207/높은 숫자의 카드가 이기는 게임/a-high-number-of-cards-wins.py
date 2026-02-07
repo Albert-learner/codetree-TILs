@@ -2,7 +2,11 @@ N = int(input())
 B = [int(input()) for _ in range(N)]
 
 # Please write your code here.
-A = [n for n in range(1, N * 2 + 1) if n not in B]
+used = [False] * (2 * N + 1)
+for b in B:
+    used[b] = True
+
+A = [i for i in range(1, 2 * N + 1) if not used[i]]
 
 A.sort()
 B.sort()
