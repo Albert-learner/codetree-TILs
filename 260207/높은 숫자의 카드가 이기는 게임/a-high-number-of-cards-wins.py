@@ -1,25 +1,33 @@
-N = int(input())
-B = [int(input()) for _ in range(N)]
+# 변수 선언 및 입력:
+n = int(input())
+a_cards = []
+b_cards = [
+    int(input())
+    for _ in range(n)
+]
+# b 카드 숫자로 이루어진 hashset을 완성해줍니다.
+b_set = set(b_cards)
 
-# Please write your code here.
-used = [False] * (2 * N + 1)
-for b in B:
-    used[b] = True
+# a 카드를 완성해줍니다.
+a_cards = [
+    num
+    for num in range(1, 2 * n + 1)
+    if num not in b_set
+]
 
-A = [i for i in range(1, 2 * N + 1) if not used[i]]
+# a, b 카드 목록을 전부 오름차순으로 정렬해줍니다.
+a_cards.sort()
+b_cards.sort()
 
-A.sort()
-B.sort()
+# a의 카드를 작은 숫자부터 보며
+# b카드의 앞에서부터 이길 수 있는 순간에 둘을 매칭하는게 최선임을 이용합니다.
+ans = 0
+b_idx = 0
+for a_idx in range(n):
+    # a가 현재 b 카드보다 우세하다면
+    # 둘을 매칭해주는게 항상 유리합니다.
+    if b_idx < n and a_cards[a_idx] > b_cards[b_idx]:
+        ans += 1
+        b_idx += 1
 
-i = 0
-max_scores = 0
-for b in B:
-    while i < N and A[i] < b:
-        i += 1
-    if i < N:
-        max_scores += 1
-        i += 1
-    else:
-        break
-
-print(max_scores)
+print(ans)
