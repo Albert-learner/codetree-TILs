@@ -1,20 +1,17 @@
 n = int(input())
 arr = list(map(int, input().split()))
 
-INF = 10 ** 9
-best = INF
-
 def solve():
-    a = arr[:]
+    a = arr[:] 
     cnt = 0
 
-    def press(i): 
+    def press(i):
         nonlocal cnt
         cnt += 1
         if i - 1 >= 0:
             a[i - 1] ^= 1
         a[i] ^= 1
-        if i + 1 <= n:
+        if i + 1 < n:
             a[i + 1] ^= 1
 
     if n == 1:
@@ -24,10 +21,9 @@ def solve():
         press(1)
 
     for i in range(2, n):
-        if a[i - 1] == 0:  
+        if a[i - 1] == 0:
             press(i)
 
     return cnt if all(x == 1 for x in a) else -1
-
 
 print(solve())
