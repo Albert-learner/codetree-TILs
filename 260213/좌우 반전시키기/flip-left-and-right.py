@@ -1,29 +1,26 @@
+# 변수 선언 및 입력:
 n = int(input())
 arr = list(map(int, input().split()))
 
-def solve():
-    a = arr[:] 
-    cnt = 0
+# 바로 앞에 칸이 아직 0이라면,
+# 현재 칸을 꼭 선택해야 합니다.
 
-    def press(i):
-        nonlocal cnt
-        cnt += 1
-        if i - 1 >= 0:
-            a[i - 1] ^= 1
-        a[i] ^= 1
+ans = 0
+for i in range(1, n):
+    if arr[i - 1] == 0:
+        ans += 1
+        arr[i - 1] = 1
+        arr[i] ^= 1
+        # 그 다음 칸이 범위 안에 들어오는 경우에만
+        # 반전을 진행합니다.
         if i + 1 < n:
-            a[i + 1] ^= 1
+            arr[i + 1] ^= 1
 
-    if n == 1:
-        return 0 if a[0] == 1 else -1
+# 불가능에 해당하는 조건은
+# 전부 진행했음에도
+# 마지막 위치에 적혀있는 숫자가
+# 여전히 0인 경우입니다.
+if arr[n - 1] == 0:
+    ans = -1
 
-    if a[0] == 0:
-        press(1)
-
-    for i in range(2, n):
-        if a[i - 1] == 0:
-            press(i)
-
-    return cnt if all(x == 1 for x in a) else -1
-
-print(solve())
+print(ans)
