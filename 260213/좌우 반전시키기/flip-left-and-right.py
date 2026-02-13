@@ -4,33 +4,30 @@ arr = list(map(int, input().split()))
 INF = 10 ** 9
 best = INF
 
-def solve(start_press_2: bool) -> int:
+def solve():
     a = arr[:]
     cnt = 0
 
     def press(i): 
         nonlocal cnt
         cnt += 1
-        if i - 1 >= 1:
-            a[i - 2] ^= 1
-        a[i - 1] ^= 1
+        if i - 1 >= 0:
+            a[i - 1] ^= 1
+        a[i] ^= 1
         if i + 1 <= n:
-            a[i] ^= 1
-
-    if n >= 2 and start_press_2:
-        press(2)
-
-    for i in range(3, n + 1):
-        if a[i - 3] == 0:  
-            press(i)
+            a[i + 1] ^= 1
 
     if n == 1:
-        return 0 if a[0] == 1 else INF 
-    if n == 2:
-        return cnt if (a[0] == 1 and a[1] == 1) else INF
+        return 0 if a[0] == 1 else -1
 
-    return cnt if (a[n - 2] == 1 and a[n - 1] == 1) else INF
+    if a[0] == 0:
+        press(1)
+
+    for i in range(2, n):
+        if a[i - 1] == 0:  
+            press(i)
+
+    return cnt if all(x == 1 for x in a) else -1
 
 
-best = min(solve(False), solve(True))
-print(-1 if best == INF else best)
+print(solve())
