@@ -1,55 +1,31 @@
-N = int(input())
+# 변수 선언 및 입력:
+n = int(input())
 a = input()
 b = input()
 
-# Please write your code here.
-from collections import deque
+# 이 문제는 앞서 나온 'G & H 반전시키기' 문제와 매우 비슷하며,
+# 구간을 겹치지 않을 때 가장 적은 길이로 반전을 할 수 있습니다.
 
-diff = [0] * (N + 3)
-for i in range(N):
-    diff[i] = 1 if a[i] != b[i] else 0
+# 계속 매치가 되다가 
+# 처음으로 미스매치가 되는 순간을 잡아
+# 그 횟수를 계산합니다.
+# 그 후 최대 4자리까지만 확인한 후 다시 미스매치가 되는 순간을 찾습니다.
+ans = 0
+mismatched = False
+cnt = 0
+for i in range(n):
+    if a[i] != b[i]:
+        # 다시 미스매치가 처음으로 발생하는 순간이라면
+        # 답을 갱신해줍니다.
+        if not mismatched or cnt >= 4:
+            mismatched = True
+            ans += 1
+            cnt = 1
+        else:
+            cnt += 1
+       
+    else:
+        mismatched = False
+        cnt = 0
 
-gens = [
-    0b0001,  
-    0b0011,  
-    0b0111, 
-    0b1111,  
-]
-
-INF = 10**15
-cost = [INF] * 16
-cost[0] = 0
-q = deque([0])
-while q:
-    cur = q.popleft()
-    for g in gens:
-        nxt = cur ^ g
-        if cost[nxt] > cost[cur] + 1:
-            cost[nxt] = cost[cur] + 1
-            q.append(nxt)
-
-dp = [INF] * 8
-start_state = (diff[0] << 0) | (diff[1] << 1) | (diff[2] << 2)
-dp[start_state] = 0
-
-for i in range(N):
-    ndp = [INF] * 8
-    next_bit = diff[i + 3]  
-    for state in range(8):
-        if dp[state] == INF:
-            continue
-
-        window = state | (next_bit << 3)
-
-        for p in range(16):
-            w2 = window ^ p
-            if (w2 & 1) != 0:
-                continue
-
-            new_state = (w2 >> 1) & 0b111 
-            ndp[new_state] = min(ndp[new_state], dp[state] + cost[p])
-    dp = ndp
-
-ans = dp[0]
-print(ans if ans < INF else -1)
-
+print(ans)
