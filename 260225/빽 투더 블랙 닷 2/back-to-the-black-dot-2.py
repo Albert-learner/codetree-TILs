@@ -3,6 +3,7 @@ red1, red2 = map(int, input().split())
 edges = [tuple(map(int, input().split())) for _ in range(M)]
 
 # Please write your code here.
+import sys
 import heapq
 
 INF = 10 ** 30
