@@ -6,10 +6,10 @@ queries = [tuple(map(int, input().split())) for _ in range(Q)]
 # Please write your code here.
 INF = 10 ** 18
 
-dist0 = [[INF] * (N + 1) for _ in range(N + 1)]
-dist1 = [[INF] * (N + 1) for _ in range(N + 1)]
+dist0 = [[INF]*(N+1) for _ in range(N+1)]
+dist1 = [[INF]*(N+1) for _ in range(N+1)]
 
-for i in range(1, N + 1):
+for i in range(1, N+1):
     if i <= P:
         dist1[i][i] = 0
     else:
@@ -21,9 +21,9 @@ for u, v, w in edges:
     else:
         dist0[u][v] = min(dist0[u][v], w)
 
-for k in range(1, N + 1):
-    for i in range(1, N + 1):
-        for j in range(1, N + 1):
+for k in range(1, N+1):
+    for i in range(1, N+1):
+        for j in range(1, N+1):
             if dist0[i][k] + dist0[k][j] < dist0[i][j]:
                 dist0[i][j] = dist0[i][k] + dist0[k][j]
 
@@ -34,12 +34,13 @@ for k in range(1, N + 1):
                 dist1[i][k] + dist1[k][j]
             )
 
-cnts, total_csts = 0, 0
+count = 0
+total_cost = 0
 
 for a, b in queries:
     if dist1[a][b] < INF:
-        cnts += 1
-        total_csts += dist1[a][b]
+        count += 1
+        total_cost += dist1[a][b]
 
-print(cnts)
-print(total_csts)
+print(count)
+print(total_cost)
