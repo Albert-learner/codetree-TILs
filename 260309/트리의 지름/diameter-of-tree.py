@@ -2,6 +2,9 @@ n = int(input())
 edges = [tuple(map(int, input().split())) for _ in range(n - 1)]
 
 # Please write your code here.
+import sys
+sys.recursionlimit(200000)
+
 graph = [[] for _ in range(n + 1)]
 
 for a, b, d in edges:
