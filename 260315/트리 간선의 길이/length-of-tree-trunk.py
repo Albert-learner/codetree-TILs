@@ -1,34 +1,52 @@
+import sys
+sys.setrecursionlimit(100000)
+
+# 변수 선언 및 입력:
 n = int(input())
-edges = [tuple(map(int, input().split())) for _ in range(n - 1)]
+edges = [[] for _ in range(n + 1)]
+visited = [False] * (n + 1)
+dist = [0] * (n + 1)
+max_dist = 0
+last_node = 0
 
-# Please write your code here.
-graph = [[] for _ in range(n + 1)]
-for a, b, w in edges:
-    graph[a].append((b, w))
-    graph[b].append((a, w))
+# n - 1개의 간선 정보를 입력받습니다.
+for _ in range(n - 1):
+    x, y, d = tuple(map(int, input().split()))
+    edges[x].append((y, d))
+    edges[y].append((x, d))
 
-def farthest(start):
-    dist = [-1] * (n + 1)
-    dist[start] = 0
-    stack = [start]
 
-    while stack:
-        cur = stack.pop()
-        for nxt, w in graph[cur]:
-            if dist[nxt] == -1:
-                dist[nxt] = dist[cur] + w
-                stack.append(nxt)
+# 모든 노드의 정점을 탐색하는 DFS를 진행합니다.
+def dfs(x):
+    global max_dist, last_node
+    
+    for y, d in edges[x]:
+        # 이미 방문한 정점이면 스킵합니다.
+        if visited[y]: 
+            continue
 
-    far_node = start
-    far_dist = 0
-    for i in range(1, n + 1):
-        if dist[i] > far_dist:
-            far_dist = dist[i]
-            far_node = i
+        visited[y] = True
+        dist[y] = dist[x] + d
 
-    return far_node, far_dist
+        # 현재 정점을 기준으로 가장 먼 노드를 찾습니다.
+        if dist[y] > max_dist:
+            max_dist = dist[y]
+            last_node = y
 
-u, _ = farthest(1)
-_, answer = farthest(u)
+        dfs(y)
 
-print(answer)
+
+# DFS를 통해 가장 먼 노드를 찾습니다.
+visited[1] = True
+dfs(1)
+
+# 가장 먼 노드에서 시작해 다시 한번 DFS를 돌려 트리의 가장 긴 거리를 찾습니다.
+for i in range(1, n + 1):
+    visited[i] = False
+    dist[i] = 0
+
+visited[last_node] = True
+dfs(last_node)
+
+# 트리의 가장 긴 거리를 출력합니다.
+print(max_dist)
