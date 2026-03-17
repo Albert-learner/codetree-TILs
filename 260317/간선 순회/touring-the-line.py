@@ -1,78 +1,59 @@
-n, d = map(int, input().split())
-
-edges = [tuple(map(int, input().split())) for _ in range(n - 1)]
-from_v, to_v, length = zip(*edges)
-from_v = list(from_v)
-to_v = list(to_v)
-length = list(length)
-
-# Please write your code here.
 import sys
-sys.setrecursionlimit(200000)
+sys.setrecursionlimit(50000)
 
-graph = [[] for _ in range(n + 1)]
-for a, b, w in edges:
-    graph[a].append((b, w))
-    graph[b].append((a, w))
+# 변수 선언 및 입력:
+n, d = tuple(map(int, input().split()))
+edges = [[] for _ in range(n + 1)]
+visited = [False] * (n + 1)
+dist_node = [0] * (n + 1)
+dist = [0] * (n + 1)
+max_dist = (0, 0)
+last_node = 0
 
-parent = [0] * (n + 1)
-order = []
+# n - 1개의 간선 정보를 입력받습니다.
+for _ in range(n - 1):
+    x, y, di = tuple(map(int, input().split()))
+    edges[x].append((y, di))
+    edges[y].append((x, di))
 
-stack = [1]
-parent[1] = -1
-while stack:
-    cur = stack.pop()
-    order.append(cur)
-    for nxt, _ in graph[cur]:
-        if nxt == parent[cur]:
-            continue
-        parent[nxt] = cur
-        stack.append(nxt)
 
-down_edges = [0] * (n + 1)
-down_weight = [0] * (n + 1)
+# 모든 노드의 정점을 탐색하는 DFS를 진행합니다.
+def dfs(x):
+    global max_dist, last_node
 
-def better(e1, w1, e2, w2):
-    if e1 != e2:
-        return e1 > e2
-    return w1 < w2
-
-best_edges = -1
-best_weight = 10**18
-
-for node in reversed(order):
-    top1_e, top1_w = -1, 10**18
-    top2_e, top2_w = -1, 10**18
-
-    for nxt, w in graph[node]:
-        if nxt == parent[node]:
+    for y, di in edges[x]:
+        # 이미 방문한 정점이면 스킵합니다.
+        if visited[y]: 
             continue
 
-        cand_e = down_edges[nxt] + 1
-        cand_w = down_weight[nxt] + w
+        visited[y] = True
+        dist_node[y] = dist_node[x] + 1
+        dist[y] = dist[x] + di
 
-        if better(cand_e, cand_w, top1_e, top1_w):
-            top2_e, top2_w = top1_e, top1_w
-            top1_e, top1_w = cand_e, cand_w
-        elif better(cand_e, cand_w, top2_e, top2_w):
-            top2_e, top2_w = cand_e, cand_w
+        cur_dist = (dist_node[y], -dist[y])
 
-    if top1_e != -1:
-        down_edges[node] = top1_e
-        down_weight[node] = top1_w
-    else:
-        down_edges[node] = 0
-        down_weight[node] = 0
+        # 현재 정점을 기준으로 가장 먼 노드를 찾습니다.
+        # 지나는 간선의 수가 최대가 되도록 하며,
+        # 동일한 경우 거리의 합이 최소가 되도록 합니다.
+        if cur_dist > max_dist:
+            max_dist = cur_dist
+            last_node = y
 
-    if better(down_edges[node], down_weight[node], best_edges, best_weight):
-        best_edges = down_edges[node]
-        best_weight = down_weight[node]
+        dfs(y)
 
-    if top2_e != -1:
-        path_e = top1_e + top2_e
-        path_w = top1_w + top2_w
-        if better(path_e, path_w, best_edges, best_weight):
-            best_edges = path_e
-            best_weight = path_w
 
-print((best_weight + d - 1) // d)
+# DFS를 통해 가장 먼 노드를 찾습니다.
+visited[1] = True
+dfs(1)
+
+# 가장 먼 노드에서 시작해 다시 한번 DFS를 돌려 트리의 가장 긴 거리를 찾습니다.
+for i in range(1, n + 1):
+    visited[i] = False
+    dist_node[i] = 0
+    dist[i] = 0
+
+visited[last_node] = True
+dfs(last_node)
+
+# 꼭 필요한 날짜의 수를 출력합니다.
+print(1 + (-max_dist[1] - 1) // d)
