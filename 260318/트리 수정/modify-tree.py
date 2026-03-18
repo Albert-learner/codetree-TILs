@@ -1,100 +1,100 @@
-n = int(input())
-edges = [tuple(map(int, input().split())) for _ in range(n - 1)]
-from_v, to_v, weight = zip(*edges)
-from_v = list(from_v)
-to_v = list(to_v)
-weight = list(weight)
-
-# Please write your code here.
 import sys
-sys.setrecursionlimit(200000)
+sys.setrecursionlimit(2000)
 
-graph = [[] for _ in range(n)]
-for a, b, w in edges:
-    graph[a].append((b, w))
-    graph[b].append((a, w))
+# 변수 선언 및 입력 :
+n = int(input())
+edge = [[] for _ in range(n)]
+removed = [
+    [False] * n
+    for _ in range(n)
+]
+edge_x = [0] * n
+edge_y = [0] * n
+edge_dist = [0] * n
 
-root = 0
-parent = [-1] * n
-pw = [0] * n                  
-order = []
+visited = [False] * n
+dist_node = [0] * n
+dist = [0] * n
+max_dist = 0
+last_node = 0
+ans = 0
 
-stack = [root]
-parent[root] = root
-while stack:
-    u = stack.pop()
-    order.append(u)
-    for v, w in graph[u]:
-        if parent[v] != -1:
+# n - 1개의 간선 정보를 입력받습니다.
+for i in range(n - 1):
+    x, y, d = tuple(map(int, input().split()))
+    edge_x[i] = x
+    edge_y[i] = y
+    edge_dist[i] = d
+
+    edge[x].append((y, d))
+    edge[y].append((x, d))
+
+
+# 모든 노드의 정점을 탐색하는 DFS를 진행합니다.
+def dfs(x):
+    global max_dist, last_node
+
+    for y, d in edge[x]:
+        # 지워진 간선이면 스킵합니다.
+        if removed[x][y]: 
             continue
-        parent[v] = u
-        pw[v] = w
-        stack.append(v)
 
-parent[root] = -1
+        # 이미 방문한 정점이면 스킵합니다.
+        if visited[y]: 
+            continue
 
-children = [[] for _ in range(n)]
-for v in range(n):
-    if parent[v] != -1:
-        children[parent[v]].append((v, pw[v]))
+        visited[y] = True
+        dist[y] = dist[x] + d
 
-down = [0] * n
-sub_diam = [0] * n
+        # 현재 정점을 기준으로 가장 먼 노드를 찾습니다.
+        if dist[y] > max_dist:
+            max_dist = dist[y]
+            last_node = y
 
-for u in reversed(order):
-    best1 = 0
-    best2 = 0
-    diam = 0
+        dfs(y)
 
-    for v, w in children[u]:
-        arm = down[v] + w
-        if arm >= best1:
-            best2 = best1
-            best1 = arm
-        elif arm > best2:
-            best2 = arm
 
-        if sub_diam[v] > diam:
-            diam = sub_diam[v]
+def get_tree_diameter(x):
+    global max_dist, last_node
+    
+    # 전역변수들을 초기화합니다.
+    for i in range(n):
+        visited[i] = False
+        dist[i] = 0
+    
+    max_dist = 0
+    last_node = x
 
-    down[u] = best1
-    sub_diam[u] = max(diam, best1 + best2)
+    # dfs를 통해 가장 멀리 있는 정점을 찾습니다.
+    visited[x] = True
+    dfs(x)
 
-NEG = -10**18
-up_dist = [NEG] * n
-up_diam = [0] * n
+    # 전역변수들을 초기화합니다.
+    for i in range(n):
+        visited[i] = False
+        dist[i] = 0
+    
+    max_dist = 0
 
-for u in order:
-    for v, w_uv in children[u]:
-        arms = [0] 
+    # dfs를 통해 가장 멀리 있는 정점에서 트리의 지름을 찾습니다. 
+    visited[last_node] = True   
+    dfs(last_node)
 
-        if up_dist[u] != NEG:
-            arms.append(up_dist[u])
+    return max_dist
 
-        max_part_diam = up_diam[u]
 
-        for s, w_us in children[u]:
-            if s == v:
-                continue
-            arms.append(down[s] + w_us)
-            if sub_diam[s] > max_part_diam:
-                max_part_diam = sub_diam[s]
+# n - 1개의 간선을 하나씩 지우고 생긴 두 트리 각각의 지름을 찾습니다.
+for i in range(n - 1):
+    removed[edge_x[i]][edge_y[i]] = True
+    removed[edge_y[i]][edge_x[i]] = True
 
-        arms.sort(reverse=True)
-        if len(arms) == 1:
-            through_u = arms[0]
-        else:
-            through_u = arms[0] + arms[1]
+    # i번 간선을 지우고 새로 그었을 때, 만들어질 수 있는 최대 지름을 찾습니다.
+    # i번 간선을 지운 뒤 생긴 두 트리에서의 지름을 새로 연결할 때 최대 지름이 됩니다.
+    max_diameter = edge_dist[i] + get_tree_diameter(edge_x[i]) + get_tree_diameter(edge_y[i])
+    ans = max(ans, max_diameter)
 
-        up_diam[v] = max(max_part_diam, through_u)
+    removed[edge_x[i]][edge_y[i]] = False
+    removed[edge_y[i]][edge_x[i]] = False
 
-        up_dist[v] = w_uv + arms[0]
-
-answer = 0
-for v in range(n):
-    if parent[v] == -1:
-        continue
-
-    answer = max(answer, sub_diam[v] + pw[v] + up_diam[v])
-
-print(answer)
+# 만들 수 있는 트리의 가장 큰 지름을 출력합니다.
+print(ans)
