@@ -1,40 +1,54 @@
-n, m = map(int, input().split())
-edges = [tuple(map(int, input().split())) for _ in range(m)]
+# 변수 선언 및 입력:
+n, m = tuple(map(int, input().split()))
 
-# Please write your code here.
-from collections import deque
-
-graph = [[] for _ in range(n + 1)]
-for a, b in edges:
-    graph[a].append(b)
-    graph[b].append(a)
-
+edge = [[] for _ in range(n + 1)]
 visited = [False] * (n + 1)
-tree_cnts = 0
 
-for start in range(1, n + 1):
-    if visited[start]:
+ans = 0
+vcnt = 0
+ecnt = 0
+
+# n - 1개의 간선 정보를 입력받습니다.
+for _ in range(m):
+    x, y = tuple(map(int, input().split()))
+    edge[x].append(y)
+    edge[y].append(x)
+
+
+# dfs 탐색을 진행합니다.
+def dfs(x):
+    global vcnt, ecnt
+    
+    for y in edge[x]:
+        # 간선 개수를 세어줍니다.
+        ecnt += 1
+
+        # 이미 방문한 정점이면 스킵합니다.
+        if visited[y]: 
+            continue
+
+        visited[y] = True
+        vcnt += 1 # 정점 개수를 세어줍니다.
+        dfs(y)
+
+
+# 모든 정점을 방문해 트리 여부를 탐색합니다.
+for i in range(1, n + 1):
+    if visited[i]: 
         continue
+    
+    visited[i] = True
+    vcnt = 1
+    ecnt = 0
+    dfs(i)
 
-    queue = deque([start])
-    visited[start] = True
+    # 2번씩 중복 세어진 경우를 처리합니다.
+    ecnt = ecnt // 2
+    
+    # 트리의 성질을 만족한다면
+    # 답을 갱신해줍니다.
+    if vcnt - 1 == ecnt:
+        ans += 1
 
-    vertex_cnts = 0
-    degree_sum = 0
-
-    while queue:
-        cur = queue.popleft()
-        vertex_cnts += 1
-        degree_sum += len(graph[cur])
-
-        for nxt in graph[cur]:
-            if not visited[nxt]:
-                visited[nxt] = True
-                queue.append(nxt)
-
-    edge_cnts = degree_sum // 2
-
-    if edge_cnts == vertex_cnts - 1:
-        tree_cnts += 1
-
-print(tree_cnts)
+# 컴퍼넌트 중 트리인 것의 개수를 출력합니다.
+print(ans)
