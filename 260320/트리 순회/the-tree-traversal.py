@@ -1,49 +1,49 @@
+# 변수 선언 및 입력:
 n = int(input())
-
-left = [0] * 26
-right = [0] * 26
-
+left, right = {}, {}
 for _ in range(n):
-    x, l, r = input().split()
-    left[ord(x) - ord("A")] = l
-    right[ord(x) - ord("A")] = r
+    x, l, r = tuple(input().split())
+    left[x] = l
+    right[x] = r
 
-# Please write your code here.
-preorder_lst = []
-inorder_lst = []
-postorder_lst = []
 
-def preorder(node):
-    if node == ".":
+def pre_order(x):
+    # .이면 존재하지 않으므로 빠져나갑니다.
+    if x == '.':
         return
 
-    idx = ord(node) - ord("A")
-    preorder_lst.append(node)
-    preorder(left[idx])
-    preorder(right[idx])
+    print(x, end="")
+    pre_order(left[x])
+    pre_order(right[x])
 
-def inorder(node):
-    if node == ".":
+
+def in_order(x):
+    # .이면 존재하지 않으므로 빠져나갑니다.
+    if x == '.':
         return
 
-    idx = ord(node) - ord("A")
-    inorder(left[idx])
-    inorder_lst.append(node)
-    inorder(right[idx])
+    in_order(left[x])
+    print(x, end="")
+    in_order(right[x])
 
-def postorder(node):
-    if node == ".":
+
+def post_order(x):
+    # .이면 존재하지 않으므로 빠져나갑니다.
+    if x == '.':
         return
 
-    idx = ord(node) - ord("A")
-    postorder(left[idx])
-    postorder(right[idx])
-    postorder_lst.append(node)
+    post_order(left[x])
+    post_order(right[x])
+    print(x, end="")
 
-preorder("A")
-inorder("A")
-postorder("A")
 
-print("".join(preorder_lst))
-print("".join(inorder_lst))
-print("".join(postorder_lst))
+# 전위 순회를 진행합니다.
+pre_order('A')
+print()
+# 중위 순회를 진행합니다.
+in_order('A')
+print()
+# 후위 순회를 진행합니다.
+post_order('A')
+print()
+
