@@ -1,75 +1,50 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <string>
+#include <algorithm>
+
 using namespace std;
 
-int main() 
-{
-    int N;
-    cin >> N;
+int n;
+string str;
 
-    string n_str;
-    cin >> n_str;
+int main() {
+    // 입력
+    cin >> n;
+    
+    cin >> str;
 
-    map<string, int> pattern_cnts;
+    int ans = 1;
 
-    for (int s_len = 1; s_len < N; s_len++) 
-    {
-        for (int chr_idx = 0; chr_idx <= N - s_len; chr_idx++) 
-        {
-            string sub = n_str.substr(chr_idx, s_len);
-            pattern_cnts[sub]++;
-        }
-    }
-    // Please write your code here.
-    vector<vector<pair<string, int>>> patterns;
-    int max_length = 0;
-    for (const auto& p : pattern_cnts) 
-    {
-        max_length = max(max_length, (int)p.first.size());
-    }
+    // 1씩 늘려가면서 어느 길이까지 2번 등장하지는지 모두 시도해봅니다.
+    for(int i = 1; i < n; i++) {
+        // 모든 길이가 i인 부분 문자열에 대해 쌍을 짓고
+        // 둘이 완전히 똑같은지 확인합니다.
 
-    for (int length = 1; length <= max_length; length++) 
-    {
-        vector<pair<string, int>> tmp;
-        for (const auto& p : pattern_cnts) 
-        {
-            if ((int)p.first.size() == length) 
-            {
-                tmp.push_back({p.first, p.second});
-            }
-        }
-        if (!tmp.empty()) 
-        {
-            patterns.push_back(tmp);
-        }
-    }
+        // twice : i 길이의 2회 이상 등장하는 부분 문자열이 존재하면 true
+        bool twice = false;
 
-    sort(patterns.begin(), patterns.end(),
-         [](const vector<pair<string, int>>& a, const vector<pair<string, int>>& b) 
-         {
-             return a[0].second > b[0].second;
-         });
+        for(int j = 0; j <= n - i; j++) {
+            for(int k = j + 1; k <= n - i; k++) {
+                // issame : j부터 i길이의 부분 문자열과
+                // k부터 i길이의 부분 문자열이 완전히 같으면 true
+                bool issame = true;
 
-    int min_length = 0;
+                for(int l = 0; l < i; l++) {
+                    if(str[j + l] != str[k + l])
+                        issame = false;
+                }
 
-    for (const auto& pattern_lst : patterns) 
-    {
-        bool all_less_than_2 = true;
-        for (const auto& p : pattern_lst) 
-        {
-            if (p.second >= 2) 
-            {
-                all_less_than_2 = false;
-                break;
+                if(issame) twice = true;
             }
         }
 
-        if (all_less_than_2) 
-        {
-            min_length = (int)pattern_lst[0].first.size();
+        if(twice)
+            ans = i + 1;
+        else
             break;
-        }
     }
 
-    cout << min_length << '\n';
+    cout << ans;
+    
     return 0;
 }
