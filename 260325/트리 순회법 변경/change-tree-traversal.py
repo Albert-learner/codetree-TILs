@@ -2,6 +2,10 @@ n = int(input())
 pre_order = [int(input()) for _ in range(n)]
 
 # Please write your code here.
+import sys
+sys.setrecursionlimit(200000)
+
+
 def build(start, end):
     if start > end:
         return
