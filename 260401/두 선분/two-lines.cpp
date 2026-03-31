@@ -1,26 +1,25 @@
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
 int main() 
 {
     // Please write your code here.
-    int x1, x2, x3, x4, tmp, tmp_;
+    int x1, x2, x3, x4;
     cin >> x1 >> x2 >> x3 >> x4;
 
-    if(x2 > x4)
+    if (x2 > x4) 
     {
-        tmp = x1;
-        x1 = x3;
-        x3 = x1;
-
-        tmp_ = x2;
-        x2 = x4;
-        x4 = tmp_;
+        swap(x1, x3);
+        swap(x2, x4);
     }
 
-    if(x2 >= x3)
-        cout << "intersecting";
-    else
-        cout << "nonintersecting";
+    if (x2 >= x3) 
+    {
+        cout << "intersecting\n";
+    } 
+    else 
+    {
+        cout << "nonintersecting\n";
+    }
     return 0;
 }
