@@ -1,71 +1,97 @@
+import sys
+sys.setrecursionlimit(10000)
+
+# 변수 선언 및 입력:
 n = int(input())
+edges = [[] for _ in range(n + 1)]
+visited = [False] * (n + 1)
+ans_path = []
 
-value = [0] + list(map(int, input().split()))
-edges = [tuple(map(int, input().split())) for _ in range(n - 1)]
+# n개의 노드에 적힌 값을 입력받습니다.
+a = [0] + list(map(int, input().split()))
 
-# Please write your code here.
-graph = [[] for _ in range(n + 1)]
-for a, b in edges:
-    graph[a].append(b)
-    graph[b].append(a)
+dp = [[0, 0] for _ in range(n + 1)]
 
-parent = [0] * (n + 1)
-order = []
+# n - 1개의 간선 정보를 입력받습니다.
+for _ in range(n - 1):
+    x, y = tuple(map(int, input().split()))
 
-stack = [1]
-parent[1] = -1
+    # 간선 정보를 인접리스트에 넣어줍니다.
+    edges[x].append(y)
+    edges[y].append(x)
 
-while stack:
-    cur = stack.pop()
-    order.append(cur)
-    for nxt in graph[cur]:
-        if nxt == parent[cur]:
+
+# 1번 노드를 시작으로 DFS를 진행하며 값을 갱신합니다.
+# dp[i][j] = i번 노드를 루트로 하는 서브트리에서
+# (j == 1일 때) i번 노드를 선택했을때의 값의 합의 최댓값
+# (j == 0일 때) i번 노드를 선택하지 않았을 때의 값의 합의 최댓값
+def dfs(x):
+    # x번 노드가 포함된 경우 합은 a[x]가 포함됩니다.
+    dp[x][1] = a[x]
+
+    # 노드 x에 연결된 간선을 살펴보며 전부 방문해줍니다.
+    for y in edges[x]:
+        # 이미 방문한 정점이라면 스킵해줍니다.
+        if visited[y]: 
             continue
 
-        parent[nxt] = cur
-        stack.append(nxt)
+        visited[y] = True
+        dfs(y)
 
-dp0 = [0] * (n + 1)
-dp1 = [0] * (n + 1)
+        # x번 노드가 포함된 경우 y번 노드는 포함될 수 없습니다.
+        # x번 노드가 포함되지 않은 경우 y번 노드는 포함될 수도,
+        # 포함되지 않을 수도 있습니다.
+        dp[x][1] += dp[y][0]
+        dp[x][0] += max(dp[y][0], dp[y][1])
 
-for cur in reversed(order):
-    dp1[cur] = value[cur]
-    for nxt in graph[cur]:
-        if nxt == parent[cur]:
+
+# 실제 DP의 값을 DFS2를 진행하여 역추적합니다.
+def dfs2(x, tp):
+    # tp가 1인 경우 x가 정답에 포함되어 있습니다. 정답 경로에 추가해줍니다.
+    if tp == 1: 
+        ans_path.append(x)
+
+    # 노드 x에 연결된 간선을 살펴보며 전부 방문해줍니다.
+    for y in edges[x]:
+        # 이미 방문한 정점이라면 스킵해줍니다.
+        if visited[y]: 
             continue
+        
+        visited[y] = True
 
-        dp0[cur] += max(dp0[nxt], dp1[nxt])
-        dp1[cur] += dp0[nxt]
-
-selected = []
-def trace(root, parent_selected):
-    stack = [(root, parent_selected, 0)]
-    while stack:
-        node, psel, state = stack.pop()
-
-        if state == 0:
-            if psel:
-                take = False
+        # tp가 1인 경우 tp가 0인 서브트리가 최선이므로 그 방향으로 이동합니다.
+        if tp == 1:
+            dfs2(y, 0)
+        # tp가 0인 경우 자식노드들은 0과 1중 더 큰 값이 넘어가므로 해당 방향으로 이동합니다.
+        else:
+            if dp[y][0] > dp[y][1]:
+                dfs2(y, 0)
             else:
-                take = dp1[node] > dp0[node]
+                dfs2(y, 1)
 
-            if take:
-                selected.append(node)
 
-            stack.append((node, take, 1))
+# 1번 노드를 시작으로 DFS를 진행하며 값을 갱신합니다.
+# dp[i][j] = i번 노드를 루트로 하는 서브트리에서
+# (j == 1일 때) i번 노드를 선택했을때의 값의 합의 최댓값
+# (j == 0일 때) i번 노드를 선택하지 않았을 때의 값의 합의 최댓값
+visited[1] = True
+dfs(1)
 
-            children = []
-            for nxt in graph[node]:
-                if nxt == parent[node]:
-                    continue
+# DFS를 다시 진행하며 DP 최적의 값이 나온 Path를 추적합니다.
+for i in range(1, n + 1):
+    visited[i] = False
 
-                children.append(nxt)
+# 최적의 답이 나오는 경로를 선택합니다
+visited[1] = True
+if dp[1][0] > dp[1][1]:
+    dfs2(1, 0)
+else:
+    dfs2(1, 1)
 
-            for nxt in reversed(children):
-                stack.append((nxt, take, 0))
+# 경로를 오름차순으로 정렬해줍니다.
+ans_path.sort()
 
-trace(1, False)
-
-selected.sort()
-print(max(dp0[1], dp1[1]))
-print(*selected)
+# 루트 노드에서 얻을 수 있는 최댓값
+print(max(dp[1][0], dp[1][1]))
+for num in ans_path:
+    print(num, end=" ")
