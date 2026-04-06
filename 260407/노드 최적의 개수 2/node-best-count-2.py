@@ -1,54 +1,81 @@
-n, m = map(int, input().split())
-
-edges = [tuple(map(int, input().split())) for _ in range(n - 1)]
-items = list(map(int, input().split()))
-
-# Please write your code here.
 import sys
-sys.setrecursionlimit(200000)
+sys.setrecursionlimit(100000)
 
-graph = [[] for _ in range(n + 1)]
-for a, b in edges:
-    graph[a].append(b)
-    graph[b].append(a)
-
-has_item = [False] * (n + 1)
-for x in items:
-    has_item[x] = True
-
+# 변수 선언 및 입력:
+n, m = tuple(map(int, input().split()))
+edges = [[] for _ in range(n + 1)]
+visited = [False] * (n + 1)
 parent = [0] * (n + 1)
-order = []
-stack = [1]
-parent[1] = -1
 
-while stack:
-    u = stack.pop()
-    order.append(u)
-    for v in graph[u]:
-        if v == parent[u]:
+# 시작부터 물건이 놓여있는지를 표시합니다
+placed = [0] * (n + 1)
+
+# dp[i][j] : i번 노드의 서브트리에서
+#            j = 0이면 정확히 i번 노드에는 물건을 놓지 않은 상황
+#            j = 1이면 정확히 i번 노드에는 물건을 내려놓은 상황이라고 했을 때
+#            해당 상황에서 조건을 만족하며 최소한으로 놓았을 때 필요한 물건의 수
+dp = [
+    [0, 0]
+    for _ in range(n + 1)
+]
+
+# n - 1개의 간선 정보를 입력받습니다.
+for _ in range(n - 1):
+    x, y = tuple(map(int, input().split()))
+    # 간선 정보를 인접리스트에 넣어줍니다.
+    edges[x].append(y)
+    edges[y].append(x)
+
+# 처음 물건이 놓여있는 m개의 위치를 입력받습니다.
+positions = list(map(int, input().split()))
+for x in positions:
+    placed[x] = True
+
+
+# DFS를 통해 연결된 모든 정점을 순회합니다.
+# 동시에 dp값을 계산해줍니다.
+def dfs(x):
+    # 노드 x에 연결된 간선을 살펴보며 전부 방문해줍니다.
+    for y in edges[x]:
+        if not visited[y]:
+            visited[y] = True
+            parent[y] = x
+            dfs(y)
+
+    # 이제 퇴각하기 전에
+    # 각각의 자식들을 다시 순회하며 
+    # dp[x][0], dp[x][1] 값을 갱신해줍니다.
+
+    # x 노드에 아무 물건도 놓지 않는 경우입니다. 
+    dp[x][0] = 0
+
+    # x 노드에 물건을 놓는 경우이므로, 
+    # 초기에 이미 물건이 놓여있다면 추가로 놓을 필요가 없으므로 0,
+    # 그렇지 않다면 1이 초기값이 됩니다. 
+    dp[x][1] = 0 if placed[x] else 1
+
+    for y in edges[x]:
+        # y가 x의 자식이 아니라면 패스합니다.
+        if parent[y] != x:
             continue
 
-        parent[v] = u
-        stack.append(v)
+        # Case 1. 
+        # x번 노드에 물건을 놓지 않는 dp[x][0] 상황에서는
+        # x의 자식들 y에 대해서는 j가 1인 경우만 선택이 가능하므로
+        # dp[y][0]값들을 전부 더해주면 됩니다.
+        dp[x][0] += dp[y][1]
 
-INF = 10 ** 18
-dp0 = [0] * (n + 1)
-dp1 = [0] * (n + 1)
+        # Case 2. 
+        # x번 노드에 물건을 놓는 dp[x][1] 상황에서는
+        # x의 자식들 y에 대해서는 j가 0, 1 경우 전부 선택이 가능하므로
+        # 최솟값을 전부 더해주면 됩니다.
+        dp[x][1] += min(dp[y][0], dp[y][1])
 
-for u in reversed(order):
-    if has_item[u]:
-        dp0[u] = INF
-        dp1[u] = 0
-    else:
-        dp0[u] = 0
-        dp1[u] = 1
 
-    for v in graph[u]:
-        if v == parent[u]:
-            continue
+# 1번 정점을 루트로 하는 트리를 만들어 문제를 해결합니다.
+# 1번 정점을 시작으로 DFS를 진행하며 dp값을 갱신합니다.
+visited[1] = True
+dfs(1)
 
-        dp0[u] += dp1[v]
-
-        dp1[u] += min(dp0[v], dp1[v])
-
-print(min(dp0[1], dp1[1]))
+# dp[1][0], dp[1][1] 중 최솟값을 출력합니다.
+print(min(dp[1][0], dp[1][1]))
