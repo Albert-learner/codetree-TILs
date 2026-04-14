@@ -5,12 +5,19 @@ path = list(map(int, input().split()))
 
 # Please write your code here.
 parent = list(range(n + 1))
+size = [1] * (n + 1)
 
 def find(x):
-    if parent[x] != x:
-        parent[x] = find(parent[x])
+    root = x
+    while parent[root] != root:
+        root = parent[root]
 
-    return parent[x]
+    while parent[x] != x:
+        nxt = parent[x]
+        parent[x] = root
+        x = nxt
+
+    return root
 
 def union(a, b):
     fa = find(a)
@@ -19,8 +26,11 @@ def union(a, b):
     if fa == fb:
         return
 
-    if fa != fb:
-        parent[fb] = fa
+    if size[fa] < size[fb]:
+        fa, fb = fb, fa
+
+    parent[fb] = fa
+    size[fa] += size[fb]
 
 for a, b in edges:
     union(a, b)
