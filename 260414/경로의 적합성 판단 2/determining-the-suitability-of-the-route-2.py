@@ -20,17 +20,17 @@ def find(x):
     return root
 
 def union(a, b):
-    fa = find(a)
-    fb = find(b)
+    ra = find(a)
+    rb = find(b)
 
-    if fa == fb:
+    if ra == rb:
         return
 
-    if size[fa] < size[fb]:
-        fa, fb = fb, fa
+    if size[ra] < size[rb]:
+        ra, rb = rb, ra
 
-    parent[fb] = fa
-    size[fa] += size[fb]
+    parent[rb] = ra
+    size[ra] += size[rb]
 
 for a, b in edges:
     union(a, b)
@@ -40,7 +40,5 @@ for node in path[1:]:
     if find(node) != root:
         print(0)
         break
-    else:
-        print(1)
-
-    
+else:
+    print(1)
