@@ -1,43 +1,57 @@
-n, m = map(int, input().split())
+# 변수 선언 및 입력:
+n, m = tuple(map(int, input().split()))
 
-operations = []
-for _ in range(m):
-    op, *nums = input().split()
-    if op == "x":
-        a, b = map(int, nums)
-        operations.append((op, a, b))
-    else:
-        a = int(nums[0])
-        operations.append((op, a))
+# 번호별 그룹을 관리합니다.
+uf = [0] * (n + 1)
 
-# Please write your code here.
-parent = list(range(n + 1))
-size = [1] * (n + 1)
+# 각 유니온 그룹의 사이즈를 관리합니다.
+sz = [0] * (n + 1)
 
+# 초기 uf 값을 설정합니다.
+for i in range(1, n + 1):
+    uf[i] = i
+    sz[i] = 1
+
+
+# x의 대표 번호를 찾아줍니다.
 def find(x):
-    while parent[x] != x:
-        parent[x] = parent[parent[x]]
-        x = parent[x]
+    # x가 루트 노드라면 x값을 반환합니다.
+    if uf[x] == x:
+        return x
+    # x가 루트 노드가 아니라면
+    # x의 부모인 uf[x]에서 탐색을 더 진행한 뒤
+    # 찾아낸 루트 노드를 uf[x]에 넣어줌과 동시에
+    # 해당 노드값을 반환합니다.
+    uf[x] = find(uf[x])
+    return uf[x]
 
-    return x
 
-def union(a, b):
-    fa = find(a)
-    fb = find(b)
+# x, y가 같은 집합이 되도록 합니다.
+def union(x, y):
+    # x, y의 대표 번호를 찾은 뒤
+    # 연결해줍니다.
+    X = find(x)
+    Y = find(y)
 
-    if fa == fb:
-        return
+    if X != Y:
+        uf[X] = Y
 
-    if size[fa] < size[fb]:
-        fa, fb = fb, fa
+        # 사이즈를 누적해줍니다.
+        sz[Y] += sz[X]
 
-    parent[fb] = fa
-    size[fa] += size[fb]
 
-for op in operations:
-    if op[0] == 'x':
-        _, a, b = op
+for _ in range(m):
+    command = input()
+    query = command[0]
+
+    if query == 'x':
+        a, b = tuple(map(int, command[2:].split()))
+
+        # 합치는 명령입니다.
         union(a, b)
     else:
-        _, a = op
-        print(size[find(a)])
+        a = int(command[2:])
+
+        # 사이즈를 반환합니다.
+        a = find(a)
+        print(sz[a])
