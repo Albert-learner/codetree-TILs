@@ -15,24 +15,24 @@ def find(x):
 
     return x
 
-def union(a, b):
-    fa, fb = find(a), find(b)
-
-    if fa == fb:
+def union(x, y):
+    rx = find(x)
+    ry = find(y)
+    if rx == ry:
         return
-
-    if rank[fa] < rank[fb]:
-        parent[fa] = fb
-    elif rank[fa] > rank[fb]:
-        parent[fb] = fa
+    
+    if rank[rx] < rank[ry]:
+        parent[rx] = ry
+    elif rank[rx] > rank[ry]:
+        parent[ry] = rx
     else:
-        parent[fb] = fa
-        rank[ra] += 1
+        parent[ry] = rx
+        rank[rx] += 1
 
-edges.sort(key = lambda x: -x[2])
+edges.sort(key=lambda x: -x[2])
 
 for u, v, s in edges:
     union(u, v)
     if find(a) == find(b):
         print(s)
-        br
+        break
