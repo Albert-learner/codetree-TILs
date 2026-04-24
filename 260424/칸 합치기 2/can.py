@@ -7,10 +7,11 @@ import sys
 parent = list(range(n + 1))
 
 def find(x):
-    if parent[x] != x:
-        parent[x] = find(parent[x])
+    while parent[x] != x:
+        parent[x] = parent[parent[x]]
+        x = parent[x]
     
-    return parent[x]
+    return x
 
 count = n
 answer = []
