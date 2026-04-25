@@ -1,38 +1,44 @@
-n, m = map(int, input().split())
-edges = [tuple(map(int, input().split())) for _ in range(m)]
+# 변수 선언 및 입력:
+n, m = tuple(map(int, input().split()))
+edges = [
+    tuple(map(int, input().split()))
+    for _ in range(m)
+]
 
-# Please write your code here.
-parent = list(range(n + 1))
+uf = [0] * (n + 1)
+
 
 def find(x):
-    while parent[x] != x:
-        parent[x] = parent[parent[x]]
-        x = parent[x]
-
-    return x
-
-def union(a, b):
-    fa, fb = find(a), find(b)
-
-    if fa == fb:
-        return False
-
-    parent[fb] = fa
-    return True
-
-edges.sort(key = lambda x: x[2])
-total_weight = 0
-edge_cnt = 0
-
-for u, v, w in edges:
-    if union(u, v):
-        total_weight += w
-        edge_cnt += 1
-
-        if edge_cnt == n - 1:
-            break
-
-print(total_weight)
+    if uf[x] == x:
+        return x
+    uf[x] = find(uf[x])
+    return uf[x]
 
 
-    
+def union(x, y):
+    X, Y = find(x), find(y)
+    uf[X] = Y
+
+
+# cost 순으로 오름차순 정렬을 진행합니다.
+edges.sort(key=lambda x: x[2])
+
+# uf 값을 초기값을 적어줍니다.
+for i in range(1, n + 1):
+    uf[i] = i
+
+# cost가 낮은 간선부터 순서대로 보며
+# 아직 두 노드가 연결이 되어있지 않을 경우에만
+# 해당 간선을 선택하고 두 노드를 합쳐주면서
+# mst를 만들어줍니다.
+ans = 0
+for x, y, cost in edges:
+    # x, y가 연결되어 있지 않다면
+    if find(x) != find(y):
+        # 해당 간선은 MST에 속하는 간선이므로
+        # 답을 갱신해주고
+        # 두 노드를 연결해줍니다.
+        ans += cost
+        union(x, y)
+
+print(ans)
