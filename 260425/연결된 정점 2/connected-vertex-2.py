@@ -15,24 +15,25 @@ def find(x):
     while parent[x] != x:
         parent[x] = parent[parent[x]]
         x = parent[x]
-
     return x
 
 def union(x, y):
-    fx, fy = find(x), find(y)
+    rx = find(x)
+    ry = find(y)
 
-    if fx == fy:
-        return
+    if rx == ry:
+        return size[rx]
 
-    if size[fx] < size[fy]:
-        fx, fy = fy, fx
+    if size[rx] < size[ry]:
+        rx, ry = ry, rx
 
-    parent[fy] = fx
-    size[fx] += size[fy]
+    parent[ry] = rx
+    size[rx] += size[ry]
 
-    return size[fx]
+    return size[rx]
 
 answer = []
+
 for x, y in edges:
     component_size = union(x, y)
     answer.append(str(component_size))
