@@ -1,48 +1,30 @@
-#include <bits/stdc++.h>
+#include <iostream>
+
+#define MAX_N 10000
+
 using namespace std;
 
-int main() 
-{
-    // Please write your code here.
-    int N;
-    cin >> N;
-    vector<long long> blocks(N);
-    for (int i = 0; i < N; i++) 
-    {
+int n;
+int blocks[MAX_N];
+
+int main() {
+    // 입력:
+    cin >> n;
+    for(int i = 0; i < n; i++)
         cin >> blocks[i];
-    }
+    
+    // 전체 블럭 수를 셉니다.
+    int sum_of_blocks = 0;
+    for(int i = 0; i < n; i++)
+        sum_of_blocks += blocks[i];
+    
+    // 평균 블럭 수 보다 더 큰 블럭에 대해서만
+    // 그 차이만큼 옮겨주면 됩니다.
+    int avg = sum_of_blocks / n;
+    int ans = 0;
+    for(int i = 0; i < n; i++)
+        if(blocks[i] > avg)
+            ans += blocks[i] - avg;
 
-    long long sum_blocks = 0;
-    for (auto b : blocks) sum_blocks += b;
-
-    long long average = sum_blocks / N;
-
-    long long cnts = 0;
-
-    while (true) 
-    {
-        bool done = true;
-        for (int i = 0; i < N; i++) 
-        {
-            if (blocks[i] != average) 
-            {
-                done = false;
-                break;
-            }
-        }
-        if (done) break;
-
-        sort(blocks.begin(), blocks.end());
-
-        long long diff = average - blocks[0];
-        long long diff_max = llabs(average - blocks[N - 1]);
-
-        blocks[0] += diff;
-        blocks[N - 1] -= diff_max;
-
-        cnts += diff;
-    }
-
-    cout << cnts << '\n';
-    return 0;
+    cout << ans;
 }
