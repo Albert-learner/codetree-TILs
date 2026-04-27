@@ -6,17 +6,20 @@ int main()
     // Please write your code here.
     int N;
     cin >> N;
-    vector<int> blocks(N);
-    for(int i = 0; i < N; i++)
+    vector<long long> blocks(N);
+    for (int i = 0; i < N; i++) 
+    {
         cin >> blocks[i];
+    }
 
-    int sum_blocks = 0;
-    for(auto b: blocks) sum_blocks += b;
+    long long sum_blocks = 0;
+    for (auto b : blocks) sum_blocks += b;
 
-    int average = sum_blocks / N;
-    int cnts = 0;
+    long long average = sum_blocks / N;
 
-    while(true)
+    long long cnts = 0;
+
+    while (true) 
     {
         bool done = true;
         for (int i = 0; i < N; i++) 
@@ -39,6 +42,7 @@ int main()
 
         cnts += diff;
     }
-    cout << cnts << endl;
+
+    cout << cnts << '\n';
     return 0;
 }
