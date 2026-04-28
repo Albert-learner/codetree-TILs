@@ -1,51 +1,64 @@
-n, m = map(int, input().split())
-
-x = []
-y = []
-for _ in range(n):
-    xi, yi = map(int, input().split())
-    x.append(xi)
-    y.append(yi)
-
-edges = [tuple(map(int, input().split())) for _ in range(m)]
-
-# Please write your code here.
 import math
 
-parent = list(range(n + 1))
+# 변수 선언 및 입력:
+n, m = tuple(map(int, input().split()))
 
-def find(x):
-    while parent[x] != x:
-        parent[x] = parent[parent[x]]
-        x = parent[x]
+uf = [0] * (n + 1)
 
-    return x
+# 그래프를 인접행렬로 표현
+points = [(-1, -1)] * (n + 1)
+for i in range(1, n + 1):
+    points[i] = tuple(map(int, input().split()))
 
-def union(a, b):
-    fa, fb = find(a), find(b)
-
-    if fa == fb:
-        return False
-
-    parent[fb] = fa
-    return True
-
-for a, b in edges:
-    union(a, b)
-
-all_edges = []
+edges = []
 for i in range(1, n + 1):
     for j in range(i + 1, n + 1):
-        dx = x[i - 1] - x[j - 1]
-        dy = y[i - 1] - y[j - 1]
-        dist = math.sqrt(dx ** 2 + dy ** 2)
-        all_edges.append((dist, i, j))
+        x1, y1 = points[i]
+        x2, y2 = points[j]
+        dist = math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
+        edges.append((dist, i, j))
 
-all_edges.sort()
+# cost 순으로 오름차순 정렬을 진행합니다.
+edges.sort()
 
-answer = 0.0
-for dist, a, b in all_edges:
-    if union(a, b):
-        answer += dist
+# uf 값을 초기값을 적어줍니다.
+for i in range(1, n + 1):
+    uf[i] = i
 
-print(f"{answer:.2f}")
+
+def find(x):
+    if uf[x] == x:
+        return x
+    uf[x] = find(uf[x])
+    return uf[x]
+
+
+def union(x, y):
+    X = find(x)
+    Y = find(y)
+    uf[X] = Y
+
+
+# m개의 간선 정보를 입력받습니다. 간선을 서로 연결해줍니다.
+for _ in range(m):
+    x, y = tuple(map(int, input().split()))
+    
+    union(x, y)
+
+# dist가 낮은 간선부터 순서대로 보며
+# 아직 두 노드가 연결이 되어있지 않을 경우에만
+# 해당 간선을 선택하고 두 노드를 합쳐주면서
+# mst를 만들어줍니다.
+ans = 0
+for dist, x, y in edges:
+    # x, y가 연결되어 있지 않다면
+    if find(x) != find(y):
+        # 해당 간선은 MST에 속하는 간선이므로
+        # 답을 갱신해주고
+        # 두 노드를 연결해줍니다.
+
+        ans += dist
+        union(x, y)
+
+# 모든 간선의 길이의 총합을 출력합니다.
+print(f"{ans:.2f}")
