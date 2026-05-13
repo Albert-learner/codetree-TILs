@@ -1,54 +1,80 @@
+from collections import deque
+
+# 변수 선언 및 입력:
 n = int(input())
-nodes = input().split()
+
+string_to_node = {}
+
+edges = [[] for _ in range(n + 1)]
+root = []
+child = [[] for _ in range(n + 1)]
+
+# 진입차수를 관리합니다.
+indegree = [0] * (n + 1)
+
+# 위상정렬을 위한 큐를 관리합니다.
+q = deque()
+
+# 각 노드의 이름을 입력받습니다.
+# 처음부터 노드의 이름 순으로 정렬해
+# 노드의 번호를 매겨주면 구현이 쉽습니다.
+nodes = [" "] + sorted(list(input().split()))
+for i in range(1, n + 1):
+    string_to_node[nodes[i]] = i
+
 m = int(input())
-
-# Please write your code here.
-from array import array
-
-nodes.sort()
-idx = {name: i for i, name in enumerate(nodes)}
-
-ancestor_count = [0] * n
-
-child_list = array('H')
-ancestor_list = array('H')
-
+# 인접리스트로 관리합니다.
 for _ in range(m):
-    x, y = input().split()
+    x_str, y_str = tuple(input().split())
 
-    child = idx[x]
-    ancestor = idx[y]
+    x, y = string_to_node[x_str], string_to_node[y_str]
 
-    child_list.append(child)
-    ancestor_list.append(ancestor)
+    edges[y].append(x) 
+    indegree[x] += 1 # 진입차수를 갱신합니다.
 
-    ancestor_count[child] += 1
+# 처음 indegree 값이 0인 곳이 루트가 됩니다.
+# 이 노드들을 queue에 넣어주고, 정답으로 미리 저장해 놓습니다.
+for i in range(1, n + 1):
+    if not indegree[i]:
+        q.append(i)
 
-parent = [-1] * n
-best_depth = [-1] * n
+        # indegree가 0인 지점들이 각 트리에서의 루트가 됩니다.
+        root.append(i)
 
-for child, ancestor in zip(child_list, ancestor_list):
-    if ancestor_count[ancestor] > best_depth[child]:
-        best_depth[child] = ancestor_count[ancestor]
-        parent[child] = ancestor
+# 위상정렬을 진행합니다.
+# queue에 원소가 남아있다면 계속 진행합니다.
+while q:
+    # 가장 앞에 있는 원소를 뽑아줍니다.
+    x = q.popleft()
 
-children = [[] for _ in range(n)]
-roots = []
+    # x에서 갈 수 있는 모든 곳을 탐색합니다.
+    for y in edges[x]:
+        # 해당 노드의 indegree를 1만큼 감소시켜줍니다.
+        indegree[y] -= 1
 
-for i in range(n):
-    if parent[i] == -1:
-        roots.append(i)
-    else:
-        children[parent[i]].append(i)
+        # 비로소 indegree가 0이 되었다면
+        # 해당 노드는 x노드의 바로 자식노드입니다.
+        # queue에 새로 넣어주고, 자식노드 정보를 갱신합니다.
+        if not indegree[y]:
+            q.append(y)
 
-for i in range(n):
-    children[i].sort()
+            # 0이 되는 순간에 이용한 간선들이
+            # 결국 트리에서의 실제 간선이 됩니다. 
+            child[x].append(y)
 
-print(len(roots))
-print(*[nodes[i] for i in roots])
+# 자식 노드들을 이름 순으로 정렬합니다.
+for i in range(1, n + 1):
+    child[i].sort()
 
-for i in range(n):
-    result = [nodes[i], str(len(children[i]))]
-    for child in children[i]:
-        result.append(nodes[child])
-    print(" ".join(result))
+# 정답을 순서대로 출력합니다.
+print(len(root))
+for str_name in root:
+    print(nodes[str_name], end=" ")
+print()
+
+for i in range(1, n + 1):
+    print(nodes[i], end=" ")
+    print(len(child[i]), end=" ")
+    for str_name in child[i]:
+        print(nodes[str_name], end=" ")
+    print()
