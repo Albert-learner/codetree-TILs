@@ -13,9 +13,8 @@ for a, b in edges:
 
 pressure = [1] * (n + 1)
 
-max_parent_pressure = [0] * (n + 1)
-
-max_count = [0] * (n + 1)
+max_pressure = [0] * (n + 1)
+max_cnt = [0] * (n + 1)
 
 q = deque()
 
@@ -29,19 +28,19 @@ while q:
     for nxt in graph[cur]:
         p = pressure[cur]
 
-        if p > max_parent_pressure[nxt]:
-            max_parent_pressure[nxt] = p
-            max_count[nxt] = 1
-        elif p == max_parent_pressure[nxt]:
-            max_count[nxt] += 1
+        if p > max_pressure[nxt]:
+            max_pressure[nxt] = p
+            max_cnt[nxt] = 1
+        elif p == max_pressure[nxt]:
+            max_cnt[nxt] += 1
 
         indegree[nxt] -= 1
 
         if indegree[nxt] == 0:
-            if max_count[nxt] >= 2:
-                pressure[nxt] = max_parent_pressure[nxt] + 1
+            if max_cnt[nxt] >= 2:
+                pressure[nxt] = max_pressure[nxt] + 1
             else:
-                pressure[nxt] = max_parent_pressure[nxt]
+                pressure[nxt] = max_pressure[nxt]
 
             q.append(nxt)
 
