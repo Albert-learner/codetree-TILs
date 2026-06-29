@@ -1,35 +1,66 @@
 n = int(input())
 arr = list(map(int, input().split()))
 
-# Please write your code here.
-INF = -10 ** 18
-MAXV = 10
+MAX_K = 10
 
-dp = [[[INF] * (MAXV + 1) for _ in range(n)] for _ in range(n)]
+# dp[i][j][k] : [i, j] 구간에 있는 수들을 전부 하나로 합쳤을 때,
+#               k를 남기면서 얻을 수 있는 최대 점수를 기록합니다.
+dp = [
+    [
+        [0 for _ in range(MAX_K + 1)]
+        for _ in range(n)
+    ]
+    for _ in range(n)
+]
 
+# pos[i][j][k] : [i, j] 구간에 있는 수들을 전부 하나로 합쳤을 때,
+#                k를 남길 수 있는지 여부를 기록합니다.
+pos = [
+    [
+        [False for _ in range(MAX_K + 1)]
+        for _ in range(n)
+    ]
+    for _ in range(n)
+]
+
+   
+# 구간의 크기가 1인 경우 dp값이 0, (그에 맞는 pos는 True)
+# 구간의 크기가 2인 경우 dp값이 두 수의 합 (그에 맞는 pos는 True)가 되어야 합니다.
+# dp[i][i + 1][abs(arr[i] - arr[i + 1])] = arr[i] + arr[i + 1]
+# 이 초기조건이 됩니다.
 for i in range(n):
-    dp[i][i][arr[i]] = 0
+    pos[i][i][arr[i]] = True
+    if (i + 1) != n:
+        dp[i][i + 1][abs(arr[i] - arr[i + 1])] = arr[i] + arr[i + 1]
+        pos[i][i + 1][abs(arr[i] - arr[i + 1])] = True
 
-for length in range(2, n + 1):
-    for l in range(n - length + 1):
-        r = l + length - 1
+# dp는 미리 구해져 있는 작은 문제를 가지고 큰 문제를 풀어야 하므로
+# 이러한 유형의 경우 구간을 점점 넓혀가면서 dp값을 채워야만 합니다. 
+# 따라서 구간의 크기를 3부터 n까지 증가하게 미리 정해줍니다.
+for gap in range(3, n + 1):
+    # 구간의 시작위치 i를 정해줍니다.
+    for i in range(n - gap + 1):
+        # 구간의 크기와 시작 위치가 정해져 있기에
+        # 끝 위치는 자동으로 정해집니다.
+        j = i + gap - 1
 
-        for mid in range(l, r):
-            left = dp[l][mid]
-            right = dp[mid + 1][r]
+        # [i, j]가 되기 위해
+        # 최종적으로 합쳐지는 두 수가
+        # 각각 [i, k], [k + 1, j]로부터 온 결과들을 바탕으로
+        # 가능한 답의 최댓값을 갱신해줍니다.
+        for k in range(i, j):
+            for x in range(MAX_K + 1):
+                if not pos[i][k][x]: continue
+                for y in range(MAX_K + 1):
+                    if not pos[k + 1][j][y]: continue
 
-            for a in range(MAXV + 1):
-                if left[a] == INF:
-                    continue
+                    score = dp[i][k][x] + dp[k + 1][j][y] + x + y
+                    pos[i][j][abs(x - y)] = True
+                    dp[i][j][abs(x - y)] = max(dp[i][j][abs(x - y)], score)
 
-                for b in range(MAXV + 1):
-                    if right[b] == INF:
-                        continue
+# 모든 수를 합치면서 얻는 최대 점수를 출력합니다.
+ans = 0
+for x in range(MAX_K + 1):
+    ans = max(ans, dp[0][n - 1][x])
 
-                    v = abs(a - b)
-                    score = left[a] + right[b] + a + b
-
-                    if score > dp[l][r][v]:
-                        dp[l][r][v] = score
-
-print(max(dp[0][n - 1]))
+print(ans)
