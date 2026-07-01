@@ -8,25 +8,20 @@ for _ in range(q):
         commands.append((line[0],))
 
 # Please write your code here.
-S_set = set()
+S = 0
+output = []
 for command in commands:
-    if command[0] != "clear":
-        cmd, cst = command
+    if command[0] != "clear":   
+        cmd, x = command
         if cmd == "add":
-            if cst not in S_set:
-                S_set.add(cst)
+            S |= (1 << x)
         elif cmd == "delete":
-            if cst in S_set:
-                S_set.discard(cst)
+            S &= ~(1 << x)
         elif cmd == "print":
-            if cst in S_set:
-                print(1)
-            else:
-                print(0)
+            output.append(1 if S & (1 << x) else 0)
         elif cmd == "toggle":
-            if cst in S_set:
-                S_set.discard(cst)
-            else:
-                S_set.add(cst)
+            S ^= (1 << x)
     else:
-        S_set.clear()
+        S = 0
+
+print('\n'.join(map(str, output)))
