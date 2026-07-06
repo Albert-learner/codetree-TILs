@@ -2,30 +2,62 @@ n = int(input())
 grid = [list(map(int, input().split())) for _ in range(n)]
 
 # Please write your code here.
-INF = float("-inf")
+INF = 10**18
 
-dp = [INF] * (1 << n)
-dp[0] = 0
+u = [0] * (n + 1)
+v = [0] * (n + 1)
+p = [0] * (n + 1)
+way = [0] * (n + 1)
 
-for i in range(n):
-    next_dp = [INF] * (1 << n)
-    
-    for mask in range(1 << n):
-        if dp[mask] == INF:
-            continue
+for i in range(1, n + 1):
+    p[0] = i
+    j0 = 0
+    minv = [INF] * (n + 1)
+    used = [False] * (n + 1)
 
-        if bin(mask).count("1") != i:
-            continue
+    while True:
+        used[j0] = True
+        i0 = p[j0]
+        delta = INF
+        j1 = 0
 
-        for j in range(n):
-            if (mask >> j) & 1:
-                continue
+        for j in range(1, n + 1):
+            if not used[j]:
+                cur = -grid[i0 - 1][j - 1] - u[i0] - v[j]
 
-            next_mask = mask | (1 << j)
-            val = dp[mask] + grid[i][j]
-            if val > next_dp[next_mask]:
-                next_dp[next_mask] = val
+                if cur < minv[j]:
+                    minv[j] = cur
+                    way[j] = j0
 
-    dp = next_dp
+                if minv[j] < delta:
+                    delta = minv[j]
+                    j1 = j
 
-print(dp[(1 << n) - 1])
+        for j in range(n + 1):
+            if used[j]:
+                u[p[j]] += delta
+                v[j] -= delta
+            else:
+                minv[j] -= delta
+
+        j0 = j1
+
+        if p[j0] == 0:
+            break
+
+    while True:
+        j1 = way[j0]
+        p[j0] = p[j1]
+        j0 = j1
+
+        if j0 == 0:
+            break
+
+answer = 0
+
+for j in range(1, n + 1):
+    row = p[j]
+    col = j
+    answer += grid[row - 1][col - 1]
+
+print(answer)
