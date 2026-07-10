@@ -1,58 +1,79 @@
-n, k = map(int, input().split())
-A = [list(map(int, input().split())) for _ in range(n)]
+n, kk = map(int, input().split())
 
-INF = float('inf')
+cost = [
+    list(map(int, input().split()))
+    for _ in range(n)
+]
 
-# dp[mask][i]: 1번(인덱스0)에서 출발, mask 집합 방문 후 현재 i에 있는 최소 비용
-# mask는 인덱스 1~n-1에 대한 비트마스크 (총 n-1비트)
-dp = [[INF] * n for _ in range(1 << n)]
+# dp[i][j] : 
+# 1번을 시작으로 겹치지 않게 방문한 위치를
+# x1, x2, ..., xk라 헀을 때 
+# 2^x1 + 2^x2 + ... + 2^xk 값이 i이고 (bitmask된 정수값이 i)
+# 그래서 현재 서 있는 위치가 j가 되었을 때
+# 가능한 최소 비용
 
-# 초기화: 1번 정점(인덱스 0)에서 각 정점으로 출발
-for j in range(1, n):
-    if A[0][j] != 0:
-        dp[1 << j][j] = A[0][j]
+# 최소 비용을 구하는 문제이기에
+# 초기값으로 아주 큰 값을 넣어줍니다.
+dp = [
+    [10 ** 9 for _ in range(n)]
+    for _ in range(1 << n)
+]
 
-# 전이
-for mask in range(1 << n):
-    # 1번 정점(비트0)은 mask에 포함되면 안 됨
-    if mask & 1:
-        continue
+# 초기조건은
+# 0번 지점을 시작으로 하며 현재 0번 위치에 서있으며
+# 지금까지 들어간 비용이 0원인 상태인
+# dp[1][0] = 0이 됩니다.
+dp[1][0] = 0
 
-    visited = bin(mask).count('1')
-    if visited >= k:  # 이미 K개 방문했으면 더 이상 확장 불필요
-        continue
-
-    for i in range(1, n):
-        if not (mask >> i & 1):  # i가 방문 안 된 상태면 skip
+# 뿌려주는 방식의 dp를 진행합니다.
+# dp[i][j]가 계산이 되어있다는 가정하에서
+# 그 다음 상태값을 갱신합니다.
+for i in range(1 << n):
+    for j in range(n):
+        # j번 지점을 방문한게 정의상 불가능 하다면
+        # 패스합니다.
+        if ((i >> j) & 1) == 0:
             continue
-        if dp[mask][i] == INF:
-            continue
 
-        for j in range(1, n):
-            if mask >> j & 1:    # 이미 방문한 정점 skip
+        # 현재 j번에서 그 다음 위치로 k번 지점을 가게 되는 경우
+        # 상태값을 계산하여 최솟값을 갱신해줍니다.
+        for k in range(n):
+            # k번 지점을 이미 방문한 적이 있다면
+            # 중복 방문은 조건상 불가하므로 패스합니다.
+            if ((i >> k) & 1) == 1:
                 continue
-            if A[i][j] == 0:     # 이동 불가 skip
+            
+            # j번에서 k번으로 가는 길이 없다면
+            # 패스합니다.
+            if cost[j][k] == 0:
                 continue
+            
+            dp[i + (1 << k)][k] = min(
+                dp[i + (1 << k)][k], dp[i][j] + cost[j][k]
+            )
 
-            next_mask = mask | (1 << j)
-            new_cost = dp[mask][i] + A[i][j]
-            if new_cost < dp[next_mask][j]:
-                dp[next_mask][j] = new_cost
+# 문제 특성상 최종적으로 0번으로 다시 돌아와야 끝이 나기에
+# 최종적으로 i번 위치에서 0번으로 이동을 끝냈을 때 가능한 최소 비용을 계산하여
+# 가능한 비용 중 최솟값을 갱신합니다.
+ans = 10**9
+for i in range(1 << n):
+    # 1번 정점을 제외한 정확히 k개의 정점을 이동한 state인지 확인합니다.
+    num = 0
+    for j in range(1, n):
+        if (i >> j) & 1: num += 1
+    if num != kk: continue
 
-# 정확히 K개 방문한 mask 중 0번으로 귀환하는 최솟값
-ans = INF
-for mask in range(1 << n):
-    if mask & 1:                         # 0번 정점 포함된 mask 제외
-        continue
-    if bin(mask).count('1') != k:        # 정확히 K개 방문한 경우만
-        continue
-    for i in range(1, n):
-        if not (mask >> i & 1):          # 현재 위치가 mask에 포함돼야 함
+    for j in range(n):
+        # j번 지점을 방문한게 정의상 불가능 하다면
+        # 패스합니다.
+        if ((i >> j) & 1) == 0:
             continue
-        if dp[mask][i] == INF:
+        
+        # j번에서 1번으로 가는 길이 없다면 패스합니다.
+        if cost[j][0] == 0:
             continue
-        if A[i][0] == 0:                 # 0번으로 귀환 불가
-            continue
-        ans = min(ans, dp[mask][i] + A[i][0])
+        
+        # 최솟값을 갱신합니다.
+        ans = min(ans, dp[i][j] + cost[j][0])
 
 print(ans)
