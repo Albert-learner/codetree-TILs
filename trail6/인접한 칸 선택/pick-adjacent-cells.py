@@ -1,54 +1,71 @@
 n, m = map(int, input().split())
-board = [list(map(int, input().split())) for _ in range(n)]
 
-def is_valid_row(mask, row_walls):
-    """같은 행 내 인접 선택 없고, 벽 위치 선택 안 함"""
-    if mask & (mask >> 1):          # 인접한 두 비트가 동시에 1이면 무효
-        return False
-    if mask & row_walls:            # 벽인 칸을 선택하면 무효
-        return False
-    return True
+board = [[0 for _ in range(m + 1)]] + [
+    [0] + list(map(int, input().split()))
+    for _ in range(n)
+]
 
-def no_col_conflict(mask1, mask2):
-    """두 행 마스크가 같은 열을 동시에 선택하지 않음"""
-    return (mask1 & mask2) == 0
+# dp[i][j] : 
+# 1번 행을 시작으로 i번 행까지 칸을 채웠을 때
+# 각 i번 행에서 각 열마다 칸을 선택했는지 여부를
+# x1, x2, ..., xk라 헀을 때 
+# 2^x1 + 2^x2 + ... + 2^xk 값이 j라 하면 (bitmask된 정수값이 j)
+# 해당 상태에서 최대로 선택할 수 있는 빈 칸의 수
 
-MOD = 1 << m  # 사용할 비트 범위
+# 초기값으로 -1을 넣어 해당 상태가 불가능함을 표기해줍니다.
+dp = [
+    [-1 for _ in range(1 << m)]
+    for _ in range(n + 1)
+]
 
-# 각 행을 벽 비트마스크로 변환 (1인 칸 = 선택 불가)
-wall_masks = []
+# 초기조건은
+# 0번째 행에서 아무것도 안 고른 상태입니다.
+# 이 때에는 0을 넣어줍니다.
+dp[0][0] = 0
+
+# 뿌려주는 방식의 dp를 진행합니다.
+# dp[i][j]가 계산이 되어있다는 가정하에서
+# 그 다음 상태값을 갱신합니다.
 for i in range(n):
-    wm = 0
-    for j in range(m):
-        if board[i][j] == 1:
-            wm |= (1 << j)
-    wall_masks.append(wm)
-
-# dp[mask]: 현재 행에서 선택 패턴이 mask일 때 최대 선택 수
-INF = -1
-dp = [INF] * (1 << m)
-dp[0] = 0  # 첫 행 처리 전: 아무것도 선택 안 한 상태
-
-for i in range(n):
-    next_dp = [INF] * (1 << m)
-
-    for prev_mask in range(1 << m):
-        if dp[prev_mask] == INF:
+    for j in range(1 << m):
+        # dp값이 -1이라면
+        # 해당 값은 불가능한 상황이므로 패스합니다.
+        if dp[i][j] == -1:
             continue
+        
+        for k in range(1 << m):
+            # 그다음 줄의 state에 대해 해당 값을 만들 수 있는지 판단하고 답을 갱신해줍니다.
+            
+            # 두 값의 비트가 겹친다면
+            # 상하로 인접한 칸이 있음을 의미하므로 패스합니다.
+            if k & j: continue
 
-        for cur_mask in range(1 << m):
-            # 현재 행 유효성 검사
-            if not is_valid_row(cur_mask, wall_masks[i]):
-                continue
-            # 이전 행과 열 충돌 검사
-            if not no_col_conflict(prev_mask, cur_mask):
-                continue
+            # k에서 연속된 두 비트의 값이 1이라면
+            # 좌우로 인접한 칸이 있음을 의미하므로 패스합니다.
+            is_overlap = False
+            for x in range(m - 1):
+                if ((k >> x) & 1) and ((k >> (x + 1)) & 1):
+                    is_overlap = True
+            if is_overlap: continue
 
-            selected = bin(cur_mask).count('1')
-            val = dp[prev_mask] + selected
-            if val > next_dp[cur_mask]:
-                next_dp[cur_mask] = val
+            # k에서 선택한 칸 중에 벽이 있으면
+            # 불가능한 상황이므로 패스합니다.
+            is_imp = False
+            for x in range(m):
+                if ((k >> x) & 1) and board[i + 1][x + 1] == 1:
+                    is_imp = True
+            if is_imp: continue
 
-    dp = next_dp
+            # i + 1번째 줄에 추가로 선택되는 칸의 개수 num을 계산해 준 뒤,
+            # dp값을 갱신해줍니다.
+            num = 0
+            for x in range(m):
+                if (k >> x) & 1: num += 1
 
-print(max(dp))
+            dp[i + 1][k] = max(dp[i + 1][k], dp[i][j] + num)
+
+# 선택할 수 있는 칸의 개수의 최댓값을 출력합니다.
+ans = 0
+for i in range(1 << m):
+    ans = max(ans, dp[n][i])
+print(ans)
