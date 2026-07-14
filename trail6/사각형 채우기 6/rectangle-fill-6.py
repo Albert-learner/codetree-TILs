@@ -1,55 +1,75 @@
 n, m = map(int, input().split())
-MOD = 10007
 
-# n과 m 중 작은 쪽을 행(ROWS)으로 설정 → 비트마스크 상태 최소화
-if n > m:
-    n, m = m, n
-ROWS = n  # 비트마스크 행 수 (더 작은 쪽)
+MOD = 10**4 + 7
 
-def can_fill_vertical(mask):
-    """
-    mask: 현재 열에서 이미 채워진 행 패턴
-    빈 칸(0인 비트)들을 세로(2×1) 블록으로 채울 수 있는지 확인
-    연속된 빈 칸 쌍으로만 채울 수 있음
-    """
-    empty = (~mask) & ((1 << ROWS) - 1)
-    row = 0
-    while row < ROWS:
-        if (empty >> row) & 1:
-            if row + 1 < ROWS and (empty >> (row + 1)) & 1:
-                row += 2
-            else:
-                return False
-        else:
-            row += 1
-    return True
+# 변수 선언
+board = [
+    [0 for _ in range(m + 1)]
+    for _ in range(n + 1)
+]
 
-# dp[mask]: 다음 열로 mask만큼 가로 블록이 돌출된 경우의 수
-dp = [0] * (1 << ROWS)
-dp[0] = 1  # 초기: 돌출 없음
+# dp[i][j] : 
+# 1번 행 1번 열부터 m번 열까지를 각각 1번부터 m번 칸이라 하고,
+# 2번 행은 m + 1번 ~ 2m번, ... 이렇게 칸 번호를 이름지었을 때
+# 현재 i - 1번 칸까지 채웠을 때 앞 m개의 칸에 각 칸마다
+# 값이 채워졌는지 여부를
+# x1, x2, ..., xk라 헀을 때 
+# 2^x1 + 2^x2 + ... + 2^xk 값이 j라 하면 (bitmask된 정수값이 j)
+# 해당 상태에서 조건에 맞게 선택할 수 있는 경우의 수
+dp = [
+    [0 for _ in range(1 << m)]
+    for _ in range(n * m + 2)
+]
 
-for col in range(m):
-    next_dp = [0] * (1 << ROWS)
 
-    for cur_mask in range(1 << ROWS):
-        if dp[cur_mask] == 0:
+# 초기조건은
+# 1번 칸에서 아무것도 안 고른 상태입니다.
+# 이 때에는 1을 넣어줍니다.
+dp[1][0] = 1
+
+# 뿌려주는 방식의 dp를 진행합니다.
+# dp[i][j]가 계산이 되어있다는 가정하에서
+# 그 다음 상태값을 갱신합니다.
+for i in range(1, n * m + 1):
+    for j in range(1 << m):
+        # dp값이 0이라면
+        # 해당 값으로 갱신해줄 것이 없으므로 패스합니다.
+        if dp[i][j] == 0:
             continue
 
-        # cur_mask: 이전 열에서 돌출되어 이미 채워진 행들
-        free = (~cur_mask) & ((1 << ROWS) - 1)  # 현재 열에서 빈 행들
+        # i번 칸에 사각형을 채워 줄 것입니다.
+        # 만약 i번 칸이 이미 채워져있으면
+        # 바로 다음 dp로 갱신해주고 넘어갑니다. 
+        if j & 1:
+            dp[i + 1][j >> 1] += dp[i][j]
+            dp[i + 1][j >> 1] %= MOD
 
-        # free의 모든 부분집합 sub: 현재 열에서 가로 블록을 새로 놓을 행들
-        sub = free
-        while True:
-            fill_mask = cur_mask | sub  # 현재 열에서 채워지는 행들
+            continue
 
-            if can_fill_vertical(fill_mask):  # 나머지를 세로 블록으로 채울 수 있는지
-                next_dp[sub] = (next_dp[sub] + dp[cur_mask]) % MOD
+        x = 1 + (i - 1) / m
+        y = 1 + (i - 1) % m
+        
+        # i + 1번 칸에서 1 * 2를 오른쪽으로 두는 방법,
+        # 1 * 2를 아랫쪽으로 내리는 두 가지 방법이 있습니다.
+        # 각각을 시도해 보고 다음 dp로 갱신해줍니다.
 
-            if sub == 0:
-                break
-            sub = (sub - 1) & free  # free의 다음 부분집합
+        # 오른쪽으로 두는 방법
+        if y != m:
+            next_j = j >> 1
+            # i + 1번 칸의 바로 다음 칸도 비어 있어야 합니다.
+            if (next_j & 1) == 0:
+                next_j += 1
+                dp[i + 1][next_j] += dp[i][j]
+                dp[i + 1][next_j] %= MOD
 
-    dp = next_dp
+        # 아랫쪽으로 두는 방법
+        if x != n:
+            next_j = j >> 1
+            # i + 1번 칸의 아래 칸(m - 1번 칸)도 비어 있어야 합니다.
+            if ((next_j >> (m - 1)) & 1) == 0:
+                next_j += (1 << (m - 1))
+                dp[i + 1][next_j] += dp[i][j]
+                dp[i + 1][next_j] %= MOD
 
-print(dp[0])
+# n * m 크기의 사각형을 채우는 방법의 수를 출력합니다.
+print(dp[n * m + 1][0])
