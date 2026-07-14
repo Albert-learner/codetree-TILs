@@ -1,58 +1,61 @@
-n, m, k = map(int, input().split())
-board = [list(map(int, input().split())) for _ in range(n)]
+n, m, kk = map(int, input().split())
 
-def is_valid(mask):
-    """같은 열 내 인접한 행이 동시에 선택되지 않음"""
-    return (mask & (mask >> 1)) == 0
+board = [[0 for _ in range(m + 1)]] + [
+    [0] + list(map(int, input().split()))
+    for _ in range(n)
+]
 
-def col_score(mask, col):
-    """현재 열(col)에서 mask에 해당하는 칸의 합과 선택 수"""
-    total, cnt = 0, 0
-    for row in range(n):
-        if (mask >> row) & 1:
-            total += board[row][col]
-            cnt += 1
-    return total, cnt
+# dp[i][j] : 
+# 1번 행을 시작으로 i번 행까지 칸을 채웠을 때
+# 각 i번 행에서 각 열마다 칸을 선택했는지 여부를
+# x1, x2, ..., xk라 헀을 때 
+# 2^x1 + 2^x2 + ... + 2^xk 값이 j라 하면 (bitmask된 정수값이 j)
+# 해당 상태에서 조건에 맞게 선택하면서 얻을 수 있는 수들의 최대 합
+dp = [
+    [
+        [0 for _ in range(kk + 1)]
+        for _ in range(1 << m)
+    ]
+    for _ in range(n + 1)
+]
 
-# 유효한 마스크 목록 미리 계산
-valid_masks = [mask for mask in range(1 << n) if is_valid(mask)]
 
-INF = -1
+# 뿌려주는 방식의 dp를 진행합니다.
+# dp[i][j]가 계산이 되어있다는 가정하에서
+# 그 다음 상태값을 갱신합니다.
+for i in range(n):
+    for j in range(1 << m):
+        for k in range(1 << m):
+            # 그다음 줄의 state에 대해 해당 값을 만들 수 있는지 판단하고 답을 갱신해줍니다.
+            
+            # 두 값의 비트가 겹친다면
+            # 상하로 인접한 칸이 있음을 의미하므로 패스합니다.
+            if k & j: continue
 
-# dp[mask][cnt]: 현재 열 패턴이 mask이고 선택 수가 cnt일 때 최대 합
-dp = [[INF] * (k + 1) for _ in range(1 << n)]
-dp[0][0] = 0  # 시작: 아무것도 선택 안 함
+            # k에서 연속된 두 비트의 값이 1이라면
+            # 좌우로 인접한 칸이 있음을 의미하므로 패스합니다.
+            is_overlap = False
+            for x in range(m - 1):
+                if ((k >> x) & 1) and ((k >> (x + 1)) & 1):
+                    is_overlap = True
+            if is_overlap: continue
 
-for col in range(m):
-    next_dp = [[INF] * (k + 1) for _ in range(1 << n)]
+            # i + 1번째 줄에 추가로 선택되는 숫자의 총합 num,
+            # 선택되는 숫자의 개수 총합 cnt를 계산해 준 뒤,
+            # dp값을 갱신해줍니다.
+            num = 0
+            cnt = 0
+            for x in range(m):
+                if (k >> x) & 1:
+                    num += board[i + 1][x + 1]
+                    cnt += 1
 
-    for prev_mask in valid_masks:
-        for prev_cnt in range(k + 1):
-            if dp[prev_mask][prev_cnt] == INF:
-                continue
+            for l in range(kk - cnt + 1):
+                dp[i + 1][k][l + cnt] = max(dp[i + 1][k][l + cnt], dp[i][j][l] + num)
 
-            for cur_mask in valid_masks:
-                # 이전 열과 현재 열이 같은 행을 동시에 선택하면 안 됨
-                if prev_mask & cur_mask:
-                    continue
-
-                score, cnt = col_score(cur_mask, col)
-                new_cnt = prev_cnt + cnt
-
-                if new_cnt > k:  # k개 초과하면 skip
-                    continue
-
-                val = dp[prev_mask][prev_cnt] + score
-                if val > next_dp[cur_mask][new_cnt]:
-                    next_dp[cur_mask][new_cnt] = val
-
-    dp = next_dp
-
-# 모든 mask, 모든 cnt(≤k)에서 최댓값
+# 선택한 칸에 적힌 값의 합의 최댓값을 출력합니다.
 ans = 0
-for mask in valid_masks:
-    for cnt in range(k + 1):
-        if dp[mask][cnt] != INF:
-            ans = max(ans, dp[mask][cnt])
-
+for i in range(1 << m):
+    for k in range(kk + 1):
+        ans = max(ans, dp[n][i][k])
 print(ans)
