@@ -1,69 +1,58 @@
 n, m, k = map(int, input().split())
 board = [list(map(int, input().split())) for _ in range(n)]
 
-# Please write your code here.
-NEG_INF = -10 ** 18
+def is_valid(mask):
+    """같은 열 내 인접한 행이 동시에 선택되지 않음"""
+    return (mask & (mask >> 1)) == 0
 
-valid_masks = []
-for mask in range(1 << m):
-    if mask & (mask << 1) == 0:
-        valid_masks.append(mask)
+def col_score(mask, col):
+    """현재 열(col)에서 mask에 해당하는 칸의 합과 선택 수"""
+    total, cnt = 0, 0
+    for row in range(n):
+        if (mask >> row) & 1:
+            total += board[row][col]
+            cnt += 1
+    return total, cnt
 
-mask_count = {}
-row_sum = [[0] * len(valid_masks) for _ in range(n)]
+# 유효한 마스크 목록 미리 계산
+valid_masks = [mask for mask in range(1 << n) if is_valid(mask)]
 
-for idx, mask in enumerate(valid_masks):
-    mask_count[mask] = mask.bit_count()
+INF = -1
 
-    for r in range(n):
-        total = 0
-        for c in range(m):
-            if mask & (1 << c):
-                total += board[r][c]
-        row_sum[r][idx] = total
+# dp[mask][cnt]: 현재 열 패턴이 mask이고 선택 수가 cnt일 때 최대 합
+dp = [[INF] * (k + 1) for _ in range(1 << n)]
+dp[0][0] = 0  # 시작: 아무것도 선택 안 함
 
-compatible = [[] for _ in range(len(valid_masks))]
+for col in range(m):
+    next_dp = [[INF] * (k + 1) for _ in range(1 << n)]
 
-for i, cur_mask in enumerate(valid_masks):
-    for j, prev_mask in enumerate(valid_masks):
-        if cur_mask & prev_mask == 0:
-            compatible[i].append(j)
+    for prev_mask in valid_masks:
+        for prev_cnt in range(k + 1):
+            if dp[prev_mask][prev_cnt] == INF:
+                continue
 
-dp = [[NEG_INF] * (k + 1) for _ in range(len(valid_masks))]
-
-zero_idx = valid_masks.index(0)
-dp[zero_idx][0] = 0
-
-for r in range(n):
-    new_dp = [[NEG_INF] * (k + 1) for _ in range(len(valid_masks))]
-
-    for cur_idx, cur_mask in enumerate(valid_masks):
-        selected = mask_count[cur_mask]
-
-        if selected > k:
-            continue
-
-        value = row_sum[r][cur_idx]
-
-        for prev_idx in compatible[cur_idx]:
-            prev_dp = dp[prev_idx]
-
-            for cnt in range(k - selected + 1):
-                if prev_dp[cnt] == NEG_INF:
+            for cur_mask in valid_masks:
+                # 이전 열과 현재 열이 같은 행을 동시에 선택하면 안 됨
+                if prev_mask & cur_mask:
                     continue
 
-                new_cnt = cnt + selected
-                candidate = prev_dp[cnt] + value
+                score, cnt = col_score(cur_mask, col)
+                new_cnt = prev_cnt + cnt
 
-                if candidate > new_dp[cur_idx][new_cnt]:
-                    new_dp[cur_idx][new_cnt] = candidate
+                if new_cnt > k:  # k개 초과하면 skip
+                    continue
 
-    dp = new_dp
+                val = dp[prev_mask][prev_cnt] + score
+                if val > next_dp[cur_mask][new_cnt]:
+                    next_dp[cur_mask][new_cnt] = val
 
-answer = 0
+    dp = next_dp
 
-for mask_dp in dp:
+# 모든 mask, 모든 cnt(≤k)에서 최댓값
+ans = 0
+for mask in valid_masks:
     for cnt in range(k + 1):
-        answer = max(answer, mask_dp[cnt])
+        if dp[mask][cnt] != INF:
+            ans = max(ans, dp[mask][cnt])
 
-print(answer)
+print(ans)
